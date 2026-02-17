@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Panikknapp – Barnläge</title>
+  <link rel="stylesheet" href="/apps/child/style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar" aria-label="Inställningar">
+      <a class="back-link" href="/index.html">← Till appval</a>
+      <label for="languageSelect" id="languageLabel">Språk</label>
+      <select id="languageSelect" aria-labelledby="languageLabel">
+        <option value="sv">Svenska</option>
+        <option value="en">English</option>
+      </select>
+    </header>
+
+    <section id="infoCard" class="info-card" aria-live="polite">
+      <h1 id="titleText">Barnens panikknapp</h1>
+      <p id="descriptionText">Håll inne knappen i 5 sekunder för att aktivera larm.</p>
+      <p id="statusText" class="status">Status: väntar</p>
+      <p id="countdownText" class="countdown"></p>
+    </section>
+
+    <button id="panic" type="button" aria-label="Panikknapp">
+      <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path class="flame" d="M 60 135 L 25 125 L 75 105 L 70 40 L 120 90 L 150 15 L 180 90 L 240 30 L 225 110 L 270 105 L 235 155 Z"/>
+        <ellipse class="ring" cx="150" cy="210" rx="125" ry="40"/>
+        <path class="body" d="M 50 160 V 200 A 100 40 0 0 0 250 200 V 160"/>
+        <ellipse class="top" cx="150" cy="160" rx="100" ry="40"/>
+      </svg>
+      <span id="panicButtonText">PANIK</span>
+    </button>
+
+    <section class="log-card" aria-live="polite">
+      <h2 id="logTitle">Senaste aktivering</h2>
+      <pre id="activationLog">Ingen aktivering ännu.</pre>
+    </section>
+  </main>
+
+  <script src="/apps/child/script.js"></script>
+</body>
+</html>

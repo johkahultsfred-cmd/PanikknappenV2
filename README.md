@@ -9,8 +9,9 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 **Idé:** En flytande panikknapp-overlay som kan dras runt på skärmen och triggas med långt tryck.
 
 **Kodplats:**
-- Appfiler: `panik-overlay/`
-- Huvudsida: `panik-overlay/index.html`
+- Appportal (ingång): `panik-overlay/index.html`
+- Barnapp: `panik-overlay/apps/child/`
+- Familjeapp (designförslag): `panik-overlay/apps/family/`
 - Electron-fil (lokal desktop-körning): `panik-overlay/main.js`
 
 ---
@@ -21,23 +22,29 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Tidigare utförda aktiviteter
 - Grundstruktur för overlay finns.
-- Interaktion för drag + långtryck (5 sekunder) finns nu i `script.js`.
-- UI är flyttat till separata filer: `index.html`, `style.css`, `script.js`.
+- Interaktion för drag + långtryck (5 sekunder) finns i barnappen.
 - Språkstöd (svenska/engelska) och aktiveringslogg i browser (`localStorage`) är tillagt.
+- Ny app-portal finns i `panik-overlay/index.html` med två val: barnapp och familjeapp.
+- Barnappen använder nu SVG-knappen med animation i `panik-overlay/apps/child/`.
+- Förslag på familjeapp-design finns i `panik-overlay/apps/family/`.
+- Netlify-konfiguration (`netlify.toml`) är verifierad med `publish = "panik-overlay"`, Node 20 och redirect för SPA (single page app/en-sides-app).
+- Deploy-test via `npx netlify-cli deploy --dir=panik-overlay` är kört i CI/container och stoppade vid Netlify-login (inloggning) eftersom browser-öppning saknas i miljön.
+- Nytt hjälpscript `scripts/netlify-deploy.sh` finns för preview/prod-deploy (publicering) med samma mappval (`panik-overlay`).
 
 ### Föreslagna nästa aktiviteter
 1. Verifiera iOS-känsla (touch-respons och läsbarhet) på riktig iPhone/iPad.
 2. Bestäm innehåll för fler språk (vilka språk utöver svenska/engelska).
-3. Planera separat design för myndighetspersonens app (vuxenläge).
+3. Koppla familjeappens knappar till riktig data/API när backend finns.
 
 ### Pågående aktivitet (nu)
-- Stabilisering av webbapp-läge med 5-sekunders aktivering, loggning och mobilfokus.
+- Köra verifierad preview deploy (testpublicering) med hjälpscript och dokumentera slutlig live-länk.
 
 ### Kvar att göra
 - Lägga till fler språk än svenska/engelska (enligt prioritering).
-- Bygga separat UI-tema för myndighetspersonens app.
+- Ersätta mockdata (testdata) i familjeappen med riktig data.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
+- Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att CLI-login är klart.
 
 ---
 
@@ -67,13 +74,15 @@ cd /workspace/PanikknappenV2/panik-overlay
 npm run check
 ```
 
-Detta check-script (snabb kontroll) verifierar att grundfilerna finns (`index.html`, `style.css`, `script.js`).
+Detta check-script (snabb kontroll) verifierar att den nya appstrukturen finns (portal + barnapp + familjeapp).
 
 ---
 
 ## 4) Netlify Deploy – enkel och pålitlig väg
 
 Mål: få en **publik URL** för preview/test.
+
+Vill du ha en kort variant? Öppna `NETLIFY_DEPLOY.md` (snabbguide med copy/paste-kommandon).
 
 Repo:t har nu en `netlify.toml` (Netlify konfigurationsfil) i repo-roten som pekar ut:
 - `publish = "panik-overlay"` (mappen som ska publiceras)
@@ -92,6 +101,30 @@ npm install -g netlify-cli
 ```bash
 netlify login
 ```
+
+Om du kör i Codex/container (isolerad körmiljö) där browser inte kan öppnas automatiskt:
+
+1. Kopiera URL:en som Netlify CLI (terminalverktyg) visar.
+2. Öppna URL:en manuellt i din vanliga browser och godkänn login.
+3. Gå tillbaka till terminalen och kör deploy-kommandot igen.
+
+### 4.1.1 Snabbdeploy med hjälpscript (rekommenderad)
+
+Kör i **repo-roten** (`/workspace/PanikknappenV2`):
+
+```bash
+cd /workspace/PanikknappenV2
+./scripts/netlify-deploy.sh preview
+```
+
+För produktion:
+
+```bash
+cd /workspace/PanikknappenV2
+./scripts/netlify-deploy.sh prod
+```
+
+Scriptet använder `npx netlify-cli` (engångskörning av CLI utan global installation) och publicerar alltid från `panik-overlay`.
 
 ### 4.2 Deploy via Netlify UI (webbläsare)
 
