@@ -1,0 +1,25 @@
+{
+  "name": "Panikknappen V2",
+  "short_name": "Panikknapp",
+  "description": "Panikknapp med barnläge och familjeläge, byggd för snabb trygghetsaktivering.",
+  "lang": "sv",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#040a1b",
+  "theme_color": "#040a1b",
+  "icons": [
+    {
+      "src": "/assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/assets/icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

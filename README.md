@@ -31,6 +31,9 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Deploy-test via `npx netlify-cli deploy --dir=panik-overlay` är kört i CI/container och stoppade vid Netlify-login (inloggning) eftersom browser-öppning saknas i miljön.
 - Nytt hjälpscript `scripts/netlify-deploy.sh` finns för preview/prod-deploy (publicering) med samma mappval (`panik-overlay`).
 - Ny to-do/funktionskarta är skapad i `to-do/readme.md` med uppdelning: klart, delvis klart, planerat och arkitekturstatus.
+- Portal, barnläge och familjeläge har fått ett nytt visuellt premiumlyft med responsiv layout, förbättrad typografi och tydligare CTA-kort.
+- GSAP (animationsbibliotek) är installerat och används lokalt via `assets/vendor/gsap.min.js` för mjuka mikroanimationer i barnläget.
+- PWA-stöd (installationsbar webbapp) är tillagt: `manifest.webmanifest`, `sw.js`, app-ikoner och installationsbanner för mobiler som stödjer install-prompt.
 
 ### Föreslagna nästa aktiviteter
 1. Bekräfta om serverdel ska ligga i samma repo eller separat repo.
@@ -38,7 +41,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Koppla familjeappens knappar till riktig data/API när backend finns.
 
 ### Pågående aktivitet (nu)
-- Synka dokumentation mot full funktionsinventering så teamet har en tydlig nulägesbild.
+- Verifiera mobil-installation (lägg till på hemskärm) i live-miljö och justera onboarding-text vid behov.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
@@ -77,6 +80,15 @@ npm run check
 ```
 
 Detta check-script (snabb kontroll) verifierar att den nya appstrukturen finns (portal + barnapp + familjeapp).
+
+## 3.2 Installera som app i mobil (PWA)
+
+När sajten ligger på HTTPS (säker webb-länk, t.ex. Netlify) kan mobilen erbjuda installation:
+
+- **Android/Chrome:** install-banner i appen visas när browsern tillåter install-prompt.
+- **iPhone/Safari:** öppna **Dela** → **Lägg till på hemskärmen**.
+
+Efter installation öppnas appen i fristående läge (utan browserfält) och grundsidorna fungerar även offline via service worker (cache-lager lokalt i mobilen).
 
 ---
 

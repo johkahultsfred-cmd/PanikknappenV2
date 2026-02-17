@@ -4,24 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panikknappen V2</title>
+  <meta name="theme-color" content="#040a1b" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/assets/icons/icon.svg" />
   <link rel="stylesheet" href="./assets/css/portal.css" />
+  <link rel="stylesheet" href="/assets/css/pwa.css" />
 </head>
 <body>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
   <main class="portal">
-    <h1>Panikknappen V2</h1>
-    <p>Välj vilken app du vill öppna.</p>
+    <section class="hero">
+      <p class="eyebrow">Trygghet i realtid</p>
+      <h1>Panikknappen V2</h1>
+      <p class="lead">Samma kärna som innan: långtryck för larm, dragbar knapp och tydlig logg. Nu med modern design, mjuka animationer och bättre mobilupplevelse.</p>
+    </section>
 
     <section class="cards" aria-label="Appval">
       <a class="card" href="./apps/child/index.html">
-        <h2>Barn/ungdom – Panikknappen</h2>
-        <p>Stor panikknapp med långtryck, dragfunktion och aktiveringslogg.</p>
+        <span class="badge">Barnläge</span>
+        <h2>Panikknapp för barn och ungdom</h2>
+        <p>Snabb panikaktivering med 5 sekunders långtryck, flyttbar knapp och visuell nedräkning.</p>
+        <span class="cta">Öppna barnläge →</span>
       </a>
 
       <a class="card" href="./apps/family/index.html">
-        <h2>Familj/myndighet – Förslag</h2>
-        <p>En lugn och tydlig designidé för vuxenläget med nästa steg.</p>
+        <span class="badge">Familjeläge</span>
+        <h2>Översikt för familj och kontaktperson</h2>
+        <p>Ren dashboard med status, händelser och snabbåtgärder som känns trygg och professionell.</p>
+        <span class="cta">Öppna familjeläge →</span>
       </a>
     </section>
   </main>
+  <script src="/assets/js/pwa.js"></script>
 </body>
 </html>
