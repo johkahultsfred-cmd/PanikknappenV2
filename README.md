@@ -33,12 +33,14 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 ### Pågående aktivitet (nu)
 - Dokumentation och workflow-optimering för enkel utveckling + deploy.
 - Lagt till språkregel: tekniska termer får parentesförklaring + plattformsanpassade instruktioner (Codex webb, GitHub webb, Netlify webb).
+- Konfigurerar Netlify via `netlify.toml` så deploy preview (förhandspublicering) alltid använder `panik-overlay/`.
 
 ### Kvar att göra
 - Koppla egen Netlify-site till repo.
 - Lägga till enkel validering/check-script i `package.json`.
 - Publicera första live-version och verifiera länk.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
+- Byt ut Netlify-exempellänk i sektion 6 mot din riktiga production URL (publik produktionslänk).
 
 ---
 
@@ -62,6 +64,10 @@ Stoppa servern:
 ## 4) Netlify Deploy – enkel och pålitlig väg
 
 Mål: få en **publik URL** för preview/test.
+
+Repo:t har nu en `netlify.toml` (Netlify konfigurationsfil) i repo-roten som pekar ut:
+- `publish = "panik-overlay"` (mappen som ska publiceras)
+- redirect-regel för `/*` till `/index.html` (gör att sidan laddar rätt även om du öppnar en undersökväg).
 
 ### 4.1 Förberedelser (en gång)
 1. Skapa konto på Netlify.
