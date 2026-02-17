@@ -1,0 +1,113 @@
+:root {
+  color-scheme: light;
+  --bg: #f7fbff;
+  --card: #ffffff;
+  --text: #123;
+  --pink: #ff4da6;
+  --pink-dark: #bf005d;
+  --ok: #0c8f5a;
+  --shadow: 0 10px 30px rgba(18, 34, 51, 0.2);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Arial", "Helvetica", sans-serif;
+  background: linear-gradient(180deg, #eff7ff 0%, #fff7fb 100%);
+  color: var(--text);
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 16px;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 12px;
+}
+
+.topbar, .info-card, .log-card {
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 12px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.back-link { margin-right: auto; }
+
+#languageSelect { font-size: 16px; padding: 6px 8px; }
+
+h1, h2, p { margin: 0 0 8px; }
+.status { font-weight: bold; }
+
+.countdown {
+  min-height: 24px;
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--pink-dark);
+}
+
+#panic {
+  position: fixed;
+  left: 62%;
+  top: 52%;
+  width: 150px;
+  border: 0;
+  background: transparent;
+  z-index: 9999999;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  animation: pulse 2.2s infinite;
+  padding: 0;
+}
+
+#panic svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 0 20px rgba(229,57,53,0.45)); }
+#panic .flame { fill: #FFD700; stroke: #E53935; stroke-width: 6; stroke-linejoin: round; transform-origin: center; animation: flameFlicker 1.2s ease-in-out infinite; }
+#panic .ring { fill: none; stroke: #9E9E9E; stroke-width: 14; }
+#panic .body { fill: #C62828; }
+#panic .top { fill: #E53935; stroke: #B71C1C; stroke-width: 4; }
+
+#panicButtonText {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+#panic:active { cursor: grabbing; }
+
+#panic.triggered .top,
+#panic.triggered .body { fill: #0c8f5a; }
+
+.log-card pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 180px;
+  overflow: auto;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+
+@keyframes flameFlicker {
+  0%,100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.04) translateY(-2px); }
+}

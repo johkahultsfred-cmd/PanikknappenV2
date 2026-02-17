@@ -1,10 +1,10 @@
 {
   "name": "panik-overlay",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
-  "description": "Webbapp för barnens panikknapp med 5-sekunders långtryck",
+  "description": "Webbapp med barnläge och familjeläge för Panikknappen",
   "scripts": {
-    "check": "node -e \"const fs=require('fs');['index.html','script.js','style.css'].forEach(f=>{if(!fs.existsSync(f)){throw new Error('Saknar fil: '+f)}}); console.log('OK: grundfiler finns');\"",
+    "check": "node -e \"const fs=require('fs');['index.html','assets/css/portal.css','apps/child/index.html','apps/child/style.css','apps/child/script.js','apps/family/index.html','apps/family/style.css'].forEach(f=>{if(!fs.existsSync(f)){throw new Error('Saknar fil: '+f)}}); console.log('OK: appstruktur finns');\"",
     "preview": "npx --yes serve . -l 4173"
   }
 }
