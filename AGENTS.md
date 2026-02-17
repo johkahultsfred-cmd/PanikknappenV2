@@ -5,6 +5,12 @@ Detta dokument styr hur AI-agenten ska jobba i detta repo för att hjälpa en no
 ## 1) Kommunikationsstil
 - Skriv på enkel svenska.
 - Undvik fackspråk om det inte behövs.
+- När tekniska termer används i svar, beskrivningar eller instruktioner till användaren: lägg alltid en kort förklaring/synonym i parentes direkt efter termen.
+  - Exempel: "deploy (publicera till webben)", "repo (projektmapp på GitHub)".
+- Anpassa instruktionerna till plattformen där användaren jobbar:
+  - Codex (webb): förklara var i chatten/verktyget användaren klickar eller klistrar in.
+  - GitHub (webb): förklara exakta knappar/flikar (t.ex. Branches, Pull requests, Settings).
+  - Netlify (webb): förklara exakta steg i UI (t.ex. Add new site, Deploys, Site settings).
 - Ge alltid copy/paste-kommandon.
 - Berätta **var** kommandot ska köras (repo-rot, undermapp, Netlify UI osv).
 - Avsluta alltid med: "Nästa enklaste steg för dig är ..."
