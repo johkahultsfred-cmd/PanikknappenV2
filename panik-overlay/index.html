@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Panikknapp – Flytande Overlay</title>
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  #panic {
+    position: fixed;
+    left: 70%;
+    top: 60%;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: radial-gradient(circle at top left, #ff5a5a, #b00000);
+    box-shadow:
+      0 0 25px rgba(255,0,0,0.6),
+      0 0 50px rgba(255,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999999;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    animation: floatPulse 2s infinite;
+  }
+
+  #panic:active {
+    cursor: grabbing;
+  }
+
+  #panic span {
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  @keyframes floatPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+</style>
+</head>
+
+<body>
+
+<div id="panic">
+  <span>PANIK</span>
+</div>
+
+<script>
+  const panic = document.getElementById("panic");
+
+  let offsetX = 0;
+  let offsetY = 0;
+  let dragging = false;
+  let pressTimer;
+
+  function start(e) {
+    dragging = true;
+    const touch = e.touches ? e.touches[0] : e;
+    offsetX = touch.clientX - panic.offsetLeft;
+    offsetY = touch.clientY - panic.offsetTop;
+
+    pressTimer = setTimeout(triggerPanic, 3000);
+  }
+
+  function move(e) {
+    if (!dragging) return;
+    const touch = e.touches ? e.touches[0] : e;
+    panic.style.left = (touch.clientX - offsetX) + "px";
+    panic.style.top = (touch.clientY - offsetY) + "px";
+  }
+
+  function end() {
+    dragging = false;
+    clearTimeout(pressTimer);
+  }
+
+  function triggerPanic() {
+    panic.innerHTML = "<span>SKICKAT</span>";
+    panic.style.background = "#111";
+    console.log("🚨 PANIK AKTIVERAD");
+  }
+
+  panic.addEventListener("mousedown", start);
+  panic.addEventListener("touchstart", start);
+
+  window.addEventListener("mousemove", move);
+  window.addEventListener("touchmove", move);
+
+  window.addEventListener("mouseup", end);
+  window.addEventListener("touchend", end);
+</script>
+
+</body>
+</html>

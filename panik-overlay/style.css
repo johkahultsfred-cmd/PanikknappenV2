@@ -1,0 +1,41 @@
+#floatingButton {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    cursor: grab;
+    animation: pulse 1s infinite;
+    user-select: none;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); filter: drop-shadow(0 0 5px gold); }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 15px gold); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 5px gold); }
+}
+
+#countdown {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    pointer-events: none;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+}
+
+#statusText {
+    position: absolute;
+    font-size: 1.2em;
+    text-align: center;
+    z-index: 1001; /* Alltid över knappen */
+    pointer-events: none; /* Texten stör inte drag */
+}
+
