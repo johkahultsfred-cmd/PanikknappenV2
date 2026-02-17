@@ -29,6 +29,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Förslag på familjeapp-design finns i `panik-overlay/apps/family/`.
 - Netlify-konfiguration (`netlify.toml`) är verifierad med `publish = "panik-overlay"`, Node 20 och redirect för SPA (single page app/en-sides-app).
 - Deploy-test via `npx netlify-cli deploy --dir=panik-overlay` är kört i CI/container och stoppade vid Netlify-login (inloggning) eftersom browser-öppning saknas i miljön.
+- Nytt hjälpscript `scripts/netlify-deploy.sh` finns för preview/prod-deploy (publicering) med samma mappval (`panik-overlay`).
 
 ### Föreslagna nästa aktiviteter
 1. Verifiera iOS-känsla (touch-respons och läsbarhet) på riktig iPhone/iPad.
@@ -36,14 +37,14 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Koppla familjeappens knappar till riktig data/API när backend finns.
 
 ### Pågående aktivitet (nu)
-- Slutföra Netlify deploy (publicera till webben) genom att koppla CLI-login (inloggning i terminalverktyg) mot användarens Netlify-konto.
+- Köra verifierad preview deploy (testpublicering) med hjälpscript och dokumentera slutlig live-länk.
 
 ### Kvar att göra
 - Lägga till fler språk än svenska/engelska (enligt prioritering).
 - Ersätta mockdata (testdata) i familjeappen med riktig data.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
-- Slutföra produktionsdeploy med `netlify deploy --prod --dir=panik-overlay` efter att CLI-login är klart.
+- Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att CLI-login är klart.
 
 ---
 
@@ -81,6 +82,8 @@ Detta check-script (snabb kontroll) verifierar att den nya appstrukturen finns (
 
 Mål: få en **publik URL** för preview/test.
 
+Vill du ha en kort variant? Öppna `NETLIFY_DEPLOY.md` (snabbguide med copy/paste-kommandon).
+
 Repo:t har nu en `netlify.toml` (Netlify konfigurationsfil) i repo-roten som pekar ut:
 - `publish = "panik-overlay"` (mappen som ska publiceras)
 - redirect-regel för `/*` till `/index.html` (gör att sidan laddar rätt även om du öppnar en undersökväg).
@@ -104,6 +107,24 @@ Om du kör i Codex/container (isolerad körmiljö) där browser inte kan öppnas
 1. Kopiera URL:en som Netlify CLI (terminalverktyg) visar.
 2. Öppna URL:en manuellt i din vanliga browser och godkänn login.
 3. Gå tillbaka till terminalen och kör deploy-kommandot igen.
+
+### 4.1.1 Snabbdeploy med hjälpscript (rekommenderad)
+
+Kör i **repo-roten** (`/workspace/PanikknappenV2`):
+
+```bash
+cd /workspace/PanikknappenV2
+./scripts/netlify-deploy.sh preview
+```
+
+För produktion:
+
+```bash
+cd /workspace/PanikknappenV2
+./scripts/netlify-deploy.sh prod
+```
+
+Scriptet använder `npx netlify-cli` (engångskörning av CLI utan global installation) och publicerar alltid från `panik-overlay`.
 
 ### 4.2 Deploy via Netlify UI (webbläsare)
 
