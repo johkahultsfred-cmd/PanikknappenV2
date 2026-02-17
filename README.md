@@ -21,26 +21,23 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Tidigare utförda aktiviteter
 - Grundstruktur för overlay finns.
-- Interaktion för drag + långtryck finns i `index.html`.
+- Interaktion för drag + långtryck (5 sekunder) finns nu i `script.js`.
+- UI är flyttat till separata filer: `index.html`, `style.css`, `script.js`.
+- Språkstöd (svenska/engelska) och aktiveringslogg i browser (`localStorage`) är tillagt.
 
 ### Föreslagna nästa aktiviteter
-1. Rensa bort gamla/överlappande filer (`style.css`, `script.js`) om de inte används.
-2. Välj primär körmodell:
-   - Endast webb (rekommenderat först), eller
-   - Electron desktop-app.
-3. Sätt upp automatisk deploy till Netlify.
+1. Verifiera iOS-känsla (touch-respons och läsbarhet) på riktig iPhone/iPad.
+2. Bestäm innehåll för fler språk (vilka språk utöver svenska/engelska).
+3. Planera separat design för myndighetspersonens app (vuxenläge).
 
 ### Pågående aktivitet (nu)
-- Dokumentation och workflow-optimering för enkel utveckling + deploy.
-- Lagt till språkregel: tekniska termer får parentesförklaring + plattformsanpassade instruktioner (Codex webb, GitHub webb, Netlify webb).
-- Konfigurerar Netlify via `netlify.toml` så deploy preview (förhandspublicering) alltid använder `panik-overlay/`.
+- Stabilisering av webbapp-läge med 5-sekunders aktivering, loggning och mobilfokus.
 
 ### Kvar att göra
-- Koppla egen Netlify-site till repo.
-- Lägga till enkel validering/check-script i `package.json`.
-- Publicera första live-version och verifiera länk.
+- Lägga till fler språk än svenska/engelska (enligt prioritering).
+- Bygga separat UI-tema för myndighetspersonens app.
+- Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
-- Byt ut Netlify-exempellänk i sektion 6 mot din riktiga production URL (publik produktionslänk).
 
 ---
 
@@ -50,7 +47,8 @@ Kör dessa kommandon i terminalen från repo-roten (`/workspace/PanikknappenV2`)
 
 ```bash
 cd /workspace/PanikknappenV2
-npx --yes serve panik-overlay -l 4173
+cd panik-overlay
+npm run preview
 ```
 
 Öppna sedan i browser:
@@ -58,6 +56,18 @@ npx --yes serve panik-overlay -l 4173
 
 Stoppa servern:
 - `Ctrl + C`
+
+
+## 3.1 Enkel check (validering)
+
+Kör i `panik-overlay/`:
+
+```bash
+cd /workspace/PanikknappenV2/panik-overlay
+npm run check
+```
+
+Detta check-script (snabb kontroll) verifierar att grundfilerna finns (`index.html`, `style.css`, `script.js`).
 
 ---
 
@@ -83,9 +93,14 @@ npm install -g netlify-cli
 netlify login
 ```
 
-### 4.2 Deploy direkt från denna mapp
+### 4.2 Deploy via Netlify UI (webbläsare)
 
-Kör från repo-roten:
+1. Gå till Netlify (webb) och öppna din site.
+2. Klicka **Deploys**.
+3. Klicka **Trigger deploy** → **Deploy site** för ny build (ny publicering).
+4. Om repo-koppling saknas: **Add new site** → **Import an existing project** och välj GitHub-repot.
+
+Alternativ med CLI (terminalverktyg), från repo-roten:
 
 ```bash
 cd /workspace/PanikknappenV2
@@ -119,9 +134,9 @@ Efter deploy ska du alltid kontrollera:
 
 ## 6) Live-länk (fyll i efter deploy)
 
-- Production URL: `EJ SATT ÄNNU`
-- Senast verifierad: `EJ SATT ÄNNU`
-- Verifierad av: `EJ SATT ÄNNU`
+- Production/Preview URL: `https://deploy-preview-4--beautiful-creponne-1506ee.netlify.app`
+- Senast verifierad: `2026-02-17`
+- Verifierad av: `Användare + AI-agent`
 
 ---
 
