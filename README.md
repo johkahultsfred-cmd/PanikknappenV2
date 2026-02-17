@@ -30,16 +30,20 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Netlify-konfiguration (`netlify.toml`) är verifierad med `publish = "panik-overlay"`, Node 20 och redirect för SPA (single page app/en-sides-app).
 - Deploy-test via `npx netlify-cli deploy --dir=panik-overlay` är kört i CI/container och stoppade vid Netlify-login (inloggning) eftersom browser-öppning saknas i miljön.
 - Nytt hjälpscript `scripts/netlify-deploy.sh` finns för preview/prod-deploy (publicering) med samma mappval (`panik-overlay`).
+- Ny to-do/funktionskarta är skapad i `to-do/readme.md` med uppdelning: klart, delvis klart, planerat och arkitekturstatus.
+- Portal, barnläge och familjeläge har fått ett nytt visuellt premiumlyft med responsiv layout, förbättrad typografi och tydligare CTA-kort.
+- GSAP (animationsbibliotek) är installerat och används lokalt via `assets/vendor/gsap.min.js` för mjuka mikroanimationer i barnläget.
 
 ### Föreslagna nästa aktiviteter
-1. Verifiera iOS-känsla (touch-respons och läsbarhet) på riktig iPhone/iPad.
-2. Bestäm innehåll för fler språk (vilka språk utöver svenska/engelska).
+1. Bekräfta om serverdel ska ligga i samma repo eller separat repo.
+2. Om separat server: dokumentera exakt WS/API-kontrakt i README.
 3. Koppla familjeappens knappar till riktig data/API när backend finns.
 
 ### Pågående aktivitet (nu)
-- Köra verifierad preview deploy (testpublicering) med hjälpscript och dokumentera slutlig live-länk.
+- Förbereda nästa steg för backend-koppling så nya premiumgränssnittet kan läsa riktig incidentdata.
 
 ### Kvar att göra
+- Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
 - Lägga till fler språk än svenska/engelska (enligt prioritering).
 - Ersätta mockdata (testdata) i familjeappen med riktig data.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
