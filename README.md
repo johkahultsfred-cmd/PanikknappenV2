@@ -9,8 +9,9 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 **Idé:** En flytande panikknapp-overlay som kan dras runt på skärmen och triggas med långt tryck.
 
 **Kodplats:**
-- Appfiler: `panik-overlay/`
-- Huvudsida: `panik-overlay/index.html`
+- Appportal (ingång): `panik-overlay/index.html`
+- Barnapp: `panik-overlay/apps/child/`
+- Familjeapp (designförslag): `panik-overlay/apps/family/`
 - Electron-fil (lokal desktop-körning): `panik-overlay/main.js`
 
 ---
@@ -21,21 +22,23 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Tidigare utförda aktiviteter
 - Grundstruktur för overlay finns.
-- Interaktion för drag + långtryck (5 sekunder) finns nu i `script.js`.
-- UI är flyttat till separata filer: `index.html`, `style.css`, `script.js`.
+- Interaktion för drag + långtryck (5 sekunder) finns i barnappen.
 - Språkstöd (svenska/engelska) och aktiveringslogg i browser (`localStorage`) är tillagt.
+- Ny app-portal finns i `panik-overlay/index.html` med två val: barnapp och familjeapp.
+- Barnappen använder nu SVG-knappen med animation i `panik-overlay/apps/child/`.
+- Förslag på familjeapp-design finns i `panik-overlay/apps/family/`.
 
 ### Föreslagna nästa aktiviteter
 1. Verifiera iOS-känsla (touch-respons och läsbarhet) på riktig iPhone/iPad.
 2. Bestäm innehåll för fler språk (vilka språk utöver svenska/engelska).
-3. Planera separat design för myndighetspersonens app (vuxenläge).
+3. Koppla familjeappens knappar till riktig data/API när backend finns.
 
 ### Pågående aktivitet (nu)
-- Stabilisering av webbapp-läge med 5-sekunders aktivering, loggning och mobilfokus.
+- Finjustera två-appsflödet (barn + familj) och förbereda nästa deploy till Netlify.
 
 ### Kvar att göra
 - Lägga till fler språk än svenska/engelska (enligt prioritering).
-- Bygga separat UI-tema för myndighetspersonens app.
+- Ersätta mockdata (testdata) i familjeappen med riktig data.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
 
@@ -67,7 +70,7 @@ cd /workspace/PanikknappenV2/panik-overlay
 npm run check
 ```
 
-Detta check-script (snabb kontroll) verifierar att grundfilerna finns (`index.html`, `style.css`, `script.js`).
+Detta check-script (snabb kontroll) verifierar att den nya appstrukturen finns (portal + barnapp + familjeapp).
 
 ---
 
