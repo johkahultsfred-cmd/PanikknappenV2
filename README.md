@@ -27,6 +27,8 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Ny app-portal finns i `panik-overlay/index.html` med två val: barnapp och familjeapp.
 - Barnappen använder nu SVG-knappen med animation i `panik-overlay/apps/child/`.
 - Förslag på familjeapp-design finns i `panik-overlay/apps/family/`.
+- Netlify-konfiguration (`netlify.toml`) är verifierad med `publish = "panik-overlay"`, Node 20 och redirect för SPA (single page app/en-sides-app).
+- Deploy-test via `npx netlify-cli deploy --dir=panik-overlay` är kört i CI/container och stoppade vid Netlify-login (inloggning) eftersom browser-öppning saknas i miljön.
 
 ### Föreslagna nästa aktiviteter
 1. Verifiera iOS-känsla (touch-respons och läsbarhet) på riktig iPhone/iPad.
@@ -34,13 +36,14 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Koppla familjeappens knappar till riktig data/API när backend finns.
 
 ### Pågående aktivitet (nu)
-- Finjustera två-appsflödet (barn + familj) och förbereda nästa deploy till Netlify.
+- Slutföra Netlify deploy (publicera till webben) genom att koppla CLI-login (inloggning i terminalverktyg) mot användarens Netlify-konto.
 
 ### Kvar att göra
 - Lägga till fler språk än svenska/engelska (enligt prioritering).
 - Ersätta mockdata (testdata) i familjeappen med riktig data.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
+- Slutföra produktionsdeploy med `netlify deploy --prod --dir=panik-overlay` efter att CLI-login är klart.
 
 ---
 
@@ -95,6 +98,12 @@ npm install -g netlify-cli
 ```bash
 netlify login
 ```
+
+Om du kör i Codex/container (isolerad körmiljö) där browser inte kan öppnas automatiskt:
+
+1. Kopiera URL:en som Netlify CLI (terminalverktyg) visar.
+2. Öppna URL:en manuellt i din vanliga browser och godkänn login.
+3. Gå tillbaka till terminalen och kör deploy-kommandot igen.
 
 ### 4.2 Deploy via Netlify UI (webbläsare)
 
