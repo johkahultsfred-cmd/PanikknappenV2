@@ -31,6 +31,8 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Deploy-test via `npx netlify-cli deploy --dir=panik-overlay` är kört i CI/container och stoppade vid Netlify-login (inloggning) eftersom browser-öppning saknas i miljön.
 - Nytt hjälpscript `scripts/netlify-deploy.sh` finns för preview/prod-deploy (publicering) med samma mappval (`panik-overlay`).
 - Ny to-do/funktionskarta är skapad i `to-do/readme.md` med uppdelning: klart, delvis klart, planerat och arkitekturstatus.
+- Portal, barnläge och familjeläge har fått ett nytt visuellt premiumlyft med responsiv layout, förbättrad typografi och tydligare CTA-kort.
+- GSAP (animationsbibliotek) är installerat och används lokalt via `assets/vendor/gsap.min.js` för mjuka mikroanimationer i barnläget.
 
 ### Föreslagna nästa aktiviteter
 1. Bekräfta om serverdel ska ligga i samma repo eller separat repo.
@@ -38,7 +40,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Koppla familjeappens knappar till riktig data/API när backend finns.
 
 ### Pågående aktivitet (nu)
-- Synka dokumentation mot full funktionsinventering så teamet har en tydlig nulägesbild.
+- Förbereda nästa steg för backend-koppling så nya premiumgränssnittet kan läsa riktig incidentdata.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.

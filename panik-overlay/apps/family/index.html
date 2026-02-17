@@ -3,22 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Familjeläge – Designförslag</title>
+  <title>Familjeläge – Panikknappen</title>
   <link rel="stylesheet" href="/apps/family/style.css" />
 </head>
 <body>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
   <main class="family-shell">
-    <a class="back-link" href="/index.html">← Till appval</a>
-    <h1>Familjeapp – designförslag</h1>
-    <p class="lead">Lugn, tydlig och snabb överblick med fokus på trygghet.</p>
+    <header class="hero">
+      <a class="back-link" href="/index.html">← Till appval</a>
+      <p class="eyebrow">Familjeläge</p>
+      <h1>Trygghetsöversikt i realtid</h1>
+      <p class="lead">Samma grundprincip: tydlig status, snabb åtgärd och logg. Nu med mer professionell dashboard-känsla.</p>
+    </header>
+
+    <section class="kpi-grid" aria-label="Snabbstatus">
+      <article class="panel kpi">
+        <p class="kpi-label">Aktiv signal</p>
+        <p class="kpi-value success">Ingen aktiv paniksignal</p>
+      </article>
+      <article class="panel kpi">
+        <p class="kpi-label">Senaste kontroll</p>
+        <p class="kpi-value">17 feb 2026 · 13:54</p>
+      </article>
+      <article class="panel kpi">
+        <p class="kpi-label">Responsmål</p>
+        <p class="kpi-value">&lt; 30 sekunder</p>
+      </article>
+    </section>
 
     <section class="grid">
-      <article class="panel">
-        <h2>Status nu</h2>
-        <p><strong>Barnets läge:</strong> Ingen aktiv paniksignal.</p>
-        <p><strong>Senast aktiv:</strong> 17 feb 2026 kl 13:54</p>
-      </article>
-
       <article class="panel">
         <h2>Snabbåtgärder</h2>
         <button>Ring upp barnet</button>
@@ -29,9 +44,10 @@
       <article class="panel panel-wide">
         <h2>Händelselogg (senaste 24 timmar)</h2>
         <ul>
-          <li>13:54 – Testsignal mottagen</li>
-          <li>13:21 – Position uppdaterad</li>
-          <li>11:07 – Check-in klar</li>
+          <li><span>13:54</span> Testsignal mottagen</li>
+          <li><span>13:21</span> Position uppdaterad</li>
+          <li><span>11:07</span> Check-in klar</li>
+          <li><span>09:42</span> Appen öppnades i barnläge</li>
         </ul>
       </article>
     </section>
