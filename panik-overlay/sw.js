@@ -1,9 +1,10 @@
-const CACHE_NAME = "panikknappen-v2-shell-v1";
+const CACHE_NAME = "panikknappen-v2-shell-v2";
 const APP_SHELL_FILES = [
   "/",
   "/index.html",
   "/manifest.webmanifest",
   "/assets/css/portal.css",
+  "/assets/css/pwa.css",
   "/assets/js/pwa.js",
   "/assets/icons/icon.svg",
   "/assets/icons/icon-maskable.svg",
@@ -16,17 +17,15 @@ const APP_SHELL_FILES = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL_FILES))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL_FILES)));
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
-    )
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
   );
   self.clients.claim();
 });
@@ -34,23 +33,27 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
+  const request = event.request;
+
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request).catch(() => caches.match(request).then((r) => r || caches.match("/index.html")))
+    );
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+    caches.match(request).then((cachedResponse) => {
+      if (cachedResponse) return cachedResponse;
 
-      return fetch(event.request)
+      return fetch(request)
         .then((response) => {
-          if (!response || response.status !== 200 || response.type !== "basic") {
-            return response;
-          }
-
+          if (!response || response.status !== 200 || response.type !== "basic") return response;
           const cloned = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned));
           return response;
         })
-        .catch(() => caches.match("/index.html"));
+        .catch(() => null);
     })
   );
 });

@@ -4,31 +4,53 @@ function isStandalone() {
   return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
 }
 
-function createInstallBanner() {
+function isIosSafari() {
+  const ua = window.navigator.userAgent;
+  const isIos = /iPad|iPhone|iPod/.test(ua);
+  const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+  return isIos && isSafari;
+}
+
+function createBanner(message, installable = false) {
   const banner = document.createElement("section");
   banner.className = "install-banner";
   banner.setAttribute("aria-live", "polite");
-  banner.innerHTML = `
-    <p>Installera appen för snabbare öppning och fullskärmsläge.</p>
-    <div class="install-banner__actions">
-      <button type="button" class="install">Installera</button>
-      <button type="button" class="dismiss">Inte nu</button>
-    </div>
-  `;
 
-  const installBtn = banner.querySelector(".install");
-  const dismissBtn = banner.querySelector(".dismiss");
+  if (installable) {
+    banner.innerHTML = `
+      <p>${message}</p>
+      <div class="install-banner__actions">
+        <button type="button" class="install">Installera</button>
+        <button type="button" class="dismiss">Inte nu</button>
+      </div>
+    `;
 
-  installBtn.addEventListener("click", async () => {
-    if (!deferredPrompt) return;
+    const installBtn = banner.querySelector(".install");
+    const dismissBtn = banner.querySelector(".dismiss");
 
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    banner.classList.remove("show");
-  });
+    installBtn.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
 
-  dismissBtn.addEventListener("click", () => banner.classList.remove("show"));
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      banner.classList.remove("show");
+    });
+
+    dismissBtn.addEventListener("click", () => banner.classList.remove("show"));
+  } else {
+    banner.innerHTML = `
+      <p>${message}</p>
+      <div class="install-banner__actions">
+        <button type="button" class="dismiss">Stäng</button>
+      </div>
+    `;
+
+    banner.querySelector(".dismiss").addEventListener("click", () => {
+      banner.classList.remove("show");
+    });
+  }
+
   document.body.appendChild(banner);
   return banner;
 }
@@ -46,7 +68,13 @@ function registerServiceWorker() {
 function setupInstallPrompt() {
   if (isStandalone()) return;
 
-  const banner = createInstallBanner();
+  if (isIosSafari()) {
+    const iosBanner = createBanner("iPhone: Tryck Dela och välj Lägg till på hemskärmen.", false);
+    iosBanner.classList.add("show");
+    return;
+  }
+
+  const banner = createBanner("Installera appen för snabbare öppning och fullskärmsläge.", true);
 
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();

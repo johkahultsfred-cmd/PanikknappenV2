@@ -34,6 +34,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Portal, barnläge och familjeläge har fått ett nytt visuellt premiumlyft med responsiv layout, förbättrad typografi och tydligare CTA-kort.
 - GSAP (animationsbibliotek) är installerat och används lokalt via `assets/vendor/gsap.min.js` för mjuka mikroanimationer i barnläget.
 - PWA-stöd (installationsbar webbapp) är tillagt: `manifest.webmanifest`, `sw.js`, app-ikoner och installationsbanner för mobiler som stödjer install-prompt.
+- PWA-flödet är stabiliserat: bättre offline-fallback i `sw.js` och inbyggd iPhone-guide i appen för "Lägg till på hemskärmen".
 
 ### Föreslagna nästa aktiviteter
 1. Bekräfta om serverdel ska ligga i samma repo eller separat repo.
@@ -41,7 +42,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Koppla familjeappens knappar till riktig data/API när backend finns.
 
 ### Pågående aktivitet (nu)
-- Verifiera mobil-installation (lägg till på hemskärm) i live-miljö och justera onboarding-text vid behov.
+- Verifiera live-länk på riktig mobil (Android + iPhone) och bekräfta att appen installeras enligt respektive flöde.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
