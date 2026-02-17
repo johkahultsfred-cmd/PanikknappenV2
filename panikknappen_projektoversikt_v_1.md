@@ -115,3 +115,6 @@ Guardian Bubble – Version 2.0
 
 Utvecklas vidare.
 
+## Kommunikationsregel för AI (tillägg)
+- AI ska skriva tekniska termer med parentesförklaring, t.ex. `branch (separat arbetsspår i Git)`.
+- AI ska anpassa instruktioner till Codex (webb), GitHub (webb) och Netlify (webb), med tydliga klicksteg i respektive gränssnitt.

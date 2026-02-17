@@ -32,11 +32,13 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Pågående aktivitet (nu)
 - Dokumentation och workflow-optimering för enkel utveckling + deploy.
+- Lagt till språkregel: tekniska termer får parentesförklaring + plattformsanpassade instruktioner (Codex webb, GitHub webb, Netlify webb).
 
 ### Kvar att göra
 - Koppla egen Netlify-site till repo.
 - Lägga till enkel validering/check-script i `package.json`.
 - Publicera första live-version och verifiera länk.
+- Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
 
 ---
 
@@ -147,3 +149,22 @@ Detta gör att du alltid vet:
 - vad som gjorts,
 - vad som kör just nu,
 - vad nästa steg är.
+
+
+## 9) Nya språkregler för AI-svar (viktigt)
+
+För att göra allt ännu mer noob-vänligt gäller följande när AI-agenten hjälper dig:
+
+1. Tekniska ord ska alltid följas av en enkel parentes-förklaring.
+   - Exempel: `deploy (publicera till webben)`
+   - Exempel: `commit (spara en versionspunkt i Git)`
+   - Exempel: `pull request/PR (förslag på ändringar i GitHub)`
+
+2. Instruktioner ska anpassas efter var du jobbar:
+   - **Codex (webb):** AI ska skriva exakt vad du gör i chatten/webbgränssnittet.
+   - **GitHub (webb):** AI ska nämna rätt flikar/knappar i GitHub-webben.
+   - **Netlify (webb):** AI ska ge tydliga UI-steg för deploy/publicering.
+
+3. Om ett terminalkommando behövs ska AI alltid skriva:
+   - exakt copy/paste-kommando,
+   - var det körs (repo-rot, undermapp, eller i Netlify/GitHub UI).
