@@ -29,12 +29,12 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Förslag på familjeapp-design finns i `panik-overlay/apps/family/`.
 - Netlify-konfiguration (`netlify.toml`) är verifierad med `publish = "panik-overlay"`, Node 20 och redirect för SPA (single page app/en-sides-app).
 - Deploy-test via `npx netlify-cli deploy --dir=panik-overlay` är kört i CI/container och stoppade vid Netlify-login (inloggning) eftersom browser-öppning saknas i miljön.
-- Nytt hjälpscript `scripts/netlify-deploy.sh` finns för preview/prod-deploy (publicering) med samma mappval (`panik-overlay`).
-- Felsökning av deployflöde klar: `scripts/netlify-deploy.sh` stödjer nu `NETLIFY_AUTH_TOKEN` för non-interactive deploy i container/CI och ger tydligt fel med steg om token saknas.
+- Nytt hjälpscript `scripts/netlify-deploy.sh` finns för preview/prod-deploy (publicering) med samma mappval (`panik-overlay`) och stöd för `NETLIFY_AUTH_TOKEN` (token för inloggad CLI-körning utan browser).
 - Ny to-do/funktionskarta är skapad i `to-do/readme.md` med uppdelning: klart, delvis klart, planerat och arkitekturstatus.
 - Portal, barnläge och familjeläge har fått ett nytt visuellt premiumlyft med responsiv layout, förbättrad typografi och tydligare CTA-kort.
 - GSAP (animationsbibliotek) är installerat och används lokalt via `assets/vendor/gsap.min.js` för mjuka mikroanimationer i barnläget.
 - Familjeläget har nu kodlås för föräldrafunktioner med initial testkod `1234`, lokal säkerhetslogg och automatisk låsning efter inaktivitet (5 minuter).
+- Felsökning klar: `panik-overlay/package.json` hade dubbla `check`-nycklar (konfigurationsfält), nu ersatt med en enda check som verifierar både familjeläge-script och lås-script.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -42,7 +42,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
 
 ### Pågående aktivitet (nu)
-- Verifiera token-baserad Netlify deploy (publicering) från container och dokumentera nästa steg för live-körning.
+- Felsökning + deployflöde för Netlify CLI så deploy fungerar både med browser-login och token i container/CI.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
@@ -51,7 +51,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Flytta föräldrakod från lokal lagring till säkrare serverkontroll när backend är redo.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
-- Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att `NETLIFY_AUTH_TOKEN` är satt eller CLI-login är klart.
+- Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att CLI-login är klart eller `NETLIFY_AUTH_TOKEN` är satt i miljön.
 - Flytta föräldrakod till servervalidering för att undvika att kod ligger synligt i klientkod.
 
 ---

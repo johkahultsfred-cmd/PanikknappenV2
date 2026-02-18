@@ -37,6 +37,12 @@ else
   echo "Tips: Om login krävs, öppna URL:en från terminalen i din vanliga browser och godkänn."
 fi
 
+AUTH_ARGS=()
+if [[ -n "${NETLIFY_AUTH_TOKEN:-}" ]]; then
+  echo "NETLIFY_AUTH_TOKEN hittades och används för icke-interaktiv deploy."
+  AUTH_ARGS+=(--auth "$NETLIFY_AUTH_TOKEN")
+fi
+
 if [[ "$MODE" == "prod" ]]; then
   npx --yes netlify-cli deploy --prod --dir=panik-overlay "${AUTH_ARGS[@]}"
 else
