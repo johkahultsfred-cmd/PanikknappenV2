@@ -69,6 +69,7 @@ Om Netlify CLI (terminalverktyg) ber om login (inloggning) och inte kan öppna b
 cd /workspace/PanikknappenV2
 export NETLIFY_AUTH_TOKEN='<din-token>'
 # krävs i CI/container (non-interactive):
+# valfritt men rekommenderat i CI/container:
 export NETLIFY_SITE_ID='<din-site-id>'
 ./scripts/netlify-deploy.sh preview
 ```
@@ -79,6 +80,7 @@ För produktion:
 cd /workspace/PanikknappenV2
 export NETLIFY_AUTH_TOKEN='<din-token>'
 # krävs i CI/container (non-interactive):
+# valfritt men rekommenderat i CI/container:
 export NETLIFY_SITE_ID='<din-site-id>'
 ./scripts/netlify-deploy.sh prod
 ```
@@ -97,5 +99,7 @@ export NETLIFY_SITE_ID='<din-site-id>'
 - Om `NETLIFY_AUTH_TOKEN` finns kör scriptet non-interactive (utan browser-login) via Netlify CLI:s miljövariabel (miljöinställning).
 - Om `NETLIFY_SITE_ID` finns lägger scriptet till `--site <site-id>` för tydlig koppling mot rätt Netlify-site i CI/container.
 - I non-interactive miljö stoppar scriptet tidigt med tydligt fel om `NETLIFY_SITE_ID` saknas (för att undvika interaktiv prompt som fastnar).
+- Om `NETLIFY_AUTH_TOKEN` finns lägger scriptet till `--auth <token>` automatiskt för non-interactive deploy (utan browser-login).
+- Om `NETLIFY_SITE_ID` finns lägger scriptet till `--site <site-id>` för tydlig koppling mot rätt Netlify-site i CI/container.
 
 Det betyder att site-mappen (mappen som publiceras) alltid är `panik-overlay`.

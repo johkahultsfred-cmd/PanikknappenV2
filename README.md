@@ -51,6 +51,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Pågående aktivitet (nu)
 - Produktionsdeploy och verifiering av live-länk via giltig token/site-id, Build hook eller GitHub Actions-workflow.
+- Produktionsdeploy med riktig token/site-id i Netlify-konto för att verifiera live-länk efter scriptfix.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
