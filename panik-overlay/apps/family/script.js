@@ -14,6 +14,35 @@ const lockAgainBtn = document.getElementById("lockAgainBtn");
 
 let autoLockTimer = null;
 
+function safeRead(key, fallback = null) {
+  try {
+    const value = localStorage.getItem(key);
+    return value === null ? fallback : value;
+  } catch (error) {
+    console.warn("Kunde inte läsa från localStorage:", error);
+    return fallback;
+  }
+}
+
+function safeWrite(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (error) {
+    console.warn("Kunde inte skriva till localStorage:", error);
+    return false;
+  }
+}
+
+function safeRemove(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch (error) {
+    console.warn("Kunde inte ta bort från localStorage:", error);
+  }
+}
+
+
 function nowLabel() {
   return new Date().toLocaleString("sv-SE", {
     hour: "2-digit",
@@ -25,11 +54,20 @@ function nowLabel() {
 }
 
 function readSecurityLog() {
-  return JSON.parse(localStorage.getItem(SECURITY_LOG_KEY) || "[]");
+  const raw = safeRead(SECURITY_LOG_KEY, "[]") || "[]";
+
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn("Säkerhetslogg var trasig JSON och återställdes:", error);
+    safeWrite(SECURITY_LOG_KEY, "[]");
+    return [];
+  }
 }
 
 function saveSecurityLog(logItems) {
-  localStorage.setItem(SECURITY_LOG_KEY, JSON.stringify(logItems.slice(0, 25)));
+  safeWrite(SECURITY_LOG_KEY, JSON.stringify(logItems.slice(0, 25)));
 }
 
 function appendSecurityLog(text) {
@@ -71,20 +109,23 @@ function setLockedState(isLocked) {
 }
 
 function markUnlocked() {
-  localStorage.setItem(SESSION_UNLOCK_KEY, String(Date.now()));
-  appendSecurityLog("Familjeläge upplåst med kod.");
+  const persisted = safeWrite(SESSION_UNLOCK_KEY, String(Date.now()));
   setLockedState(false);
+  appendSecurityLog("Familjeläge upplåst med kod.");
+  if (!persisted) {
+    appendSecurityLog("Varning: session kunde inte sparas i localStorage. Upplåsning fungerar ändå för denna vy.");
+  }
   resetAutoLock();
 }
 
 function shouldStayUnlocked() {
-  const unlockedAt = Number(localStorage.getItem(SESSION_UNLOCK_KEY) || "0");
+  const unlockedAt = Number(safeRead(SESSION_UNLOCK_KEY, "0") || "0");
   if (!unlockedAt) return false;
   return Date.now() - unlockedAt < AUTO_LOCK_MS;
 }
 
 function lockFamily(reason) {
-  localStorage.removeItem(SESSION_UNLOCK_KEY);
+  safeRemove(SESSION_UNLOCK_KEY);
   appendSecurityLog(reason || "Familjeläge låstes.");
   setLockedState(true);
 
