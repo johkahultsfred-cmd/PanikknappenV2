@@ -80,6 +80,15 @@ npm run check
 
 Detta check-script (snabb kontroll) verifierar att den nya appstrukturen finns (portal + barnapp + familjeapp).
 
+## 3.2 Installera som app i mobil (PWA)
+
+När sajten ligger på HTTPS (säker webb-länk, t.ex. Netlify) kan mobilen erbjuda installation:
+
+- **Android/Chrome:** install-banner i appen visas när browsern tillåter install-prompt.
+- **iPhone/Safari:** öppna **Dela** → **Lägg till på hemskärmen**.
+
+Efter installation öppnas appen i fristående läge (utan browserfält) och grundsidorna fungerar även offline via service worker (cache-lager lokalt i mobilen).
+
 ---
 
 ## 4) Netlify Deploy – enkel och pålitlig väg
