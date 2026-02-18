@@ -36,6 +36,13 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Familjeläget har nu kodlås för föräldrafunktioner med initial testkod `1234`, lokal säkerhetslogg och automatisk låsning efter inaktivitet (5 minuter).
 - Felsökning klar: `panik-overlay/package.json` hade dubbla `check`-nycklar (konfigurationsfält), nu ersatt med en enda check som verifierar både familjeläge-script och lås-script.
 - Felsökning klar: `scripts/netlify-deploy.sh` använder nu samma argumentkedja utan dubbletter och stödjer även `NETLIFY_SITE_ID` (site-id för direkt koppling i CI/container).
+- Förbättring klar: deploy-scriptet använder nu absolut publish-mapp, undviker `--auth`-flagga och stoppar tidigt med tydligt fel om site-id saknas i non-interactive miljö.
+- Förbättring klar: deploy-scriptet har nu även `hook`-läge med `NETLIFY_DEPLOY_HOOK_URL` (build hook-länk) för enkel trigger i CI utan CLI-login.
+- Förbättring klar: hook-läget provar nu fallback från `preview_server_hooks` till `build_hooks` vid 404 för bättre felsökning.
+- Förbättring klar: hook-läget stödjer nu hook-URL både via env (`NETLIFY_DEPLOY_HOOK_URL`) och direktargument samt städar temporärsvar med `mktemp`/`trap`.
+- Förbättring klar: hook-fel visar nu exakt 3-stegs återställning när Netlify svarar 404 (saknad/ogiltig hook).
+- Förbättring klar: scriptet validerar nu hook-URL-format tidigt och stoppar direkt om värdet inte är en Netlify-hook-länk.
+- Uppföljning klar: PR-spåret är flyttat till branch `Variant_3` för vidare ändringar i ett eget, tydligt arbetsflöde.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -43,6 +50,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
 
 ### Pågående aktivitet (nu)
+- Produktionsdeploy och verifiering av live-länk via giltig token/site-id, Build hook eller GitHub Actions-workflow.
 - Produktionsdeploy med riktig token/site-id i Netlify-konto för att verifiera live-länk efter scriptfix.
 
 ### Kvar att göra
@@ -262,4 +270,3 @@ Nu kräver familjeläget en 4-siffrig föräldrakod innan känsliga funktioner v
 1. Flytta kodverifiering till backend/API (serverkontroll) så PIN aldrig behöver lagras lokalt.
 2. Lägg till biometriskt lås (Face ID/Touch ID/fingeravtryck) via enhetens säkra funktioner när native wrapper finns.
 3. Lägg till adminflöde för återställning av kod via verifierad vuxenkontakt.
-
