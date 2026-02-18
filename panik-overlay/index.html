@@ -5,14 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panikknappen V2</title>
   <meta name="theme-color" content="#040a1b" />
-  <script>
-    (() => {
-      const { pathname, search, hash } = window.location;
-      if (!pathname.endsWith("/") && !pathname.endsWith(".html")) {
-        window.location.replace(`${pathname}/${search}${hash}`);
-      }
-    })();
-  </script>
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" href="./assets/icons/icon.svg" />
   <link rel="stylesheet" href="./assets/css/portal.css" />
