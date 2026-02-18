@@ -1,20 +1,22 @@
-const CACHE_NAME = "panikknappen-v2-shell-v2";
+const CACHE_NAME = "panikknappen-v2-shell-v3";
 const APP_SHELL_FILES = [
-  "/",
-  "/index.html",
-  "/manifest.webmanifest",
-  "/assets/css/portal.css",
-  "/assets/css/pwa.css",
-  "/assets/js/pwa.js",
-  "/assets/icons/icon.svg",
-  "/assets/icons/icon-maskable.svg",
-  "/assets/vendor/gsap.min.js",
-  "/apps/child/index.html",
-  "/apps/child/style.css",
-  "/apps/child/script.js",
-  "/apps/family/index.html",
-  "/apps/family/style.css"
-];
+  "./",
+  "index.html",
+  "manifest.webmanifest",
+  "assets/css/portal.css",
+  "assets/css/pwa.css",
+  "assets/js/pwa.js",
+  "assets/js/family-lock.js",
+  "assets/icons/icon.svg",
+  "assets/icons/icon-maskable.svg",
+  "assets/vendor/gsap.min.js",
+  "apps/child/index.html",
+  "apps/child/style.css",
+  "apps/child/script.js",
+  "apps/family/index.html",
+  "apps/family/style.css",
+  "apps/family/script.js"
+]
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL_FILES)));
@@ -37,7 +39,7 @@ self.addEventListener("fetch", (event) => {
 
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(() => caches.match(request).then((r) => r || caches.match("/index.html")))
+      fetch(request).catch(() => caches.match(request).then((r) => r || caches.match("index.html")))
     );
     return;
   }
