@@ -1,3 +1,4 @@
+const PARENT_CODE_LOCK_DISABLED = true;
 const TEST_PARENT_CODE = "1234";
 const SECURITY_LOG_KEY = "familySecurityLog";
 const SESSION_UNLOCK_KEY = "familyUnlockedAt";
@@ -111,7 +112,11 @@ function setLockedState(isLocked) {
 function markUnlocked() {
   const persisted = safeWrite(SESSION_UNLOCK_KEY, String(Date.now()));
   setLockedState(false);
-  appendSecurityLog("Familjeläge upplåst med kod.");
+  appendSecurityLog(
+    PARENT_CODE_LOCK_DISABLED
+      ? "Familjeläge öppnades utan kod (tillfälligt läge)."
+      : "Familjeläge upplåst med kod."
+  );
   if (!persisted) {
     appendSecurityLog("Varning: session kunde inte sparas i localStorage. Upplåsning fungerar ändå för denna vy.");
   }
@@ -155,26 +160,31 @@ function addFamilyActionLog(actionText) {
   }
 }
 
-codeForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const enteredCode = parentCodeInput.value.trim();
+if (PARENT_CODE_LOCK_DISABLED) {
+  lockAgainBtn.hidden = true;
+  markUnlocked();
+} else {
+  codeForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const enteredCode = parentCodeInput.value.trim();
 
-  if (enteredCode === TEST_PARENT_CODE) {
-    lockMessage.textContent = "Kod godkänd. Familjeläge öppnas.";
-    lockMessage.classList.remove("error");
-    markUnlocked();
-    return;
-  }
+    if (enteredCode === TEST_PARENT_CODE) {
+      lockMessage.textContent = "Kod godkänd. Familjeläge öppnas.";
+      lockMessage.classList.remove("error");
+      markUnlocked();
+      return;
+    }
 
-  lockMessage.textContent = "Fel kod. Försök igen.";
-  lockMessage.classList.add("error");
-  appendSecurityLog("Misslyckat kodförsök i familjeläge.");
-  parentCodeInput.select();
-});
+    lockMessage.textContent = "Fel kod. Försök igen.";
+    lockMessage.classList.add("error");
+    appendSecurityLog("Misslyckat kodförsök i familjeläge.");
+    parentCodeInput.select();
+  });
 
-lockAgainBtn.addEventListener("click", () => {
-  lockFamily("Manuell låsning via knappen 'Lås familjeläge igen'.");
-});
+  lockAgainBtn.addEventListener("click", () => {
+    lockFamily("Manuell låsning via knappen 'Lås familjeläge igen'.");
+  });
+}
 
 document.querySelectorAll("button[data-action]").forEach((button) => {
   button.addEventListener("click", () => {
@@ -187,16 +197,19 @@ document.querySelectorAll("button[data-action]").forEach((button) => {
 
 ["click", "keydown", "touchstart"].forEach((eventName) => {
   familyShell.addEventListener(eventName, () => {
+    if (PARENT_CODE_LOCK_DISABLED) return;
     if (parentLock.hidden) resetAutoLock();
   });
 });
 
-if (shouldStayUnlocked()) {
-  setLockedState(false);
-  appendSecurityLog("Familjeläge återöppnades via aktiv session.");
-  resetAutoLock();
-} else {
-  setLockedState(true);
+if (!PARENT_CODE_LOCK_DISABLED) {
+  if (shouldStayUnlocked()) {
+    setLockedState(false);
+    appendSecurityLog("Familjeläge återöppnades via aktiv session.");
+    resetAutoLock();
+  } else {
+    setLockedState(true);
+  }
 }
 
 renderSecurityLog();
