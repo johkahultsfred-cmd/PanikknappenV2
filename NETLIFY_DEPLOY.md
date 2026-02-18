@@ -20,6 +20,19 @@ cd /workspace/PanikknappenV2
 ./scripts/netlify-deploy.sh prod
 ```
 
+
+## 2.1) Alternativ: deploy via Build hook (enkelt i CI utan token)
+
+Kör i **repo-roten** (`/workspace/PanikknappenV2`):
+
+```bash
+cd /workspace/PanikknappenV2
+export NETLIFY_DEPLOY_HOOK_URL='<din-build-hook-url>'
+./scripts/netlify-deploy.sh hook
+```
+
+Skapa hook i Netlify UI (webb): **Site configuration** → **Build & deploy** → **Build hooks** → **Add build hook**.
+
 ## 3) Om login blockerar i container/Codex
 
 Om Netlify CLI (terminalverktyg) ber om login (inloggning) och inte kan öppna browser automatiskt finns två vägar:

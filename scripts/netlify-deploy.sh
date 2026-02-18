@@ -12,8 +12,8 @@ if [[ ! -d "$PUBLISH_DIR" ]]; then
   exit 1
 fi
 
-if [[ "$MODE" != "preview" && "$MODE" != "prod" ]]; then
-  echo "Användning: ./scripts/netlify-deploy.sh [preview|prod]"
+if [[ "$MODE" != "preview" && "$MODE" != "prod" && "$MODE" != "hook" ]]; then
+  echo "Användning: ./scripts/netlify-deploy.sh [preview|prod|hook]"
   exit 1
 fi
 
