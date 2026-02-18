@@ -1,0 +1,52 @@
+.install-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  width: min(540px, calc(100% - 20px));
+  background: rgba(10, 18, 42, 0.94);
+  border: 1px solid rgba(130, 188, 255, 0.45);
+  border-radius: 14px;
+  padding: 10px 12px;
+  color: #f3f8ff;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  z-index: 10000000;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+}
+
+.install-banner.show {
+  display: flex;
+}
+
+.install-banner p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.install-banner__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.install-banner button {
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.install-banner .install {
+  background: linear-gradient(120deg, #4bc6ff, #6ef0ff);
+  color: #02203f;
+}
+
+.install-banner .dismiss {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
