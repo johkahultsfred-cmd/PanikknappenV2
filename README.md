@@ -62,7 +62,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Uppföljning klar: PR-spåret är flyttat till branch `Variant_3` för vidare ändringar i ett eget, tydligt arbetsflöde.
 - Felsökning klar: barn- och familjesidan använder nu relativa filvägar (sökvägar utan inledande `/`) så CSS/JS/back-länkar fungerar även efter deploy på undersökväg (t.ex. GitHub Pages).
 - Felsökning klar (2026-02-18): föräldralåset i familjeläget respekterar nu `hidden`-attributet i CSS, så korrekt kod (`1234`) döljer låsskärmen och släpper fram dashboarden som tänkt.
-- Ändring klar (2026-02-18): kodlåset i familjeläget är nu helt borttaget tills vidare så familjesidan alltid öppnas direkt utan kodprompt.
+- Ändring klar (2026-02-18): kodlåset i familjeläget är tillfälligt avstängt så sidan öppnas direkt utan kod medan vidare felsökning pågår.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -71,13 +71,13 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Pågående aktivitet (nu)
 - Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
-- Verifiera att familjesidan öppnas direkt i både lokal körning och publicerad miljö utan kodprompt.
+- Planera när föräldrakod ska slås på igen efter att åtkomstflödet är stabilt.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
 - Lägga till fler språk än svenska/engelska (enligt prioritering).
 - Ersätta mockdata (testdata) i familjeappen med riktig data.
-- Planera ny, enklare föräldrakodlösning som kan aktiveras senare utan att blockera åtkomst.
+- Återaktivera kodlåset i familjeläget när inloggningsflödet fungerar stabilt för testgruppen.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
 - Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att CLI-login är klart eller `NETLIFY_AUTH_TOKEN` + `NETLIFY_SITE_ID` är satta i miljön.
