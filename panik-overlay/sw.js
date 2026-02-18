@@ -1,4 +1,4 @@
-const CACHE_NAME = "panikknappen-v2-shell-v3";
+const CACHE_NAME = "panikknappen-v2-shell-v4";
 const APP_SHELL_FILES = [
   "./",
   "index.html",
@@ -56,6 +56,59 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => null);
+    })
+  );
+});
+
+self.addEventListener("push", (event) => {
+  let payload = {
+    title: "🚨 Paniklarm",
+    body: "Nytt larm i familjeläget.",
+    url: "/apps/family/"
+  };
+
+  if (event.data) {
+    try {
+      const parsed = event.data.json();
+      payload = {
+        ...payload,
+        ...parsed
+      };
+    } catch (error) {
+      // fallback till standardpayload
+    }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body,
+      icon: "/assets/icons/icon.svg",
+      badge: "/assets/icons/icon-maskable.svg",
+      data: {
+        url: payload.url || "/apps/family/",
+        incidentId: payload.incidentId || null,
+        familyId: payload.familyId || null
+      }
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const targetUrl = event.notification?.data?.url || "/apps/family/";
+
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+      for (const client of clients) {
+        if ("focus" in client) {
+          client.navigate(targetUrl);
+          return client.focus();
+        }
+      }
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(targetUrl);
+      }
+      return undefined;
     })
   );
 });

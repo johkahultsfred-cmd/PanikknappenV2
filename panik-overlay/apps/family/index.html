@@ -16,25 +16,33 @@
       <a class="back-link" href="../../index.html">← Till appval</a>
       <p class="eyebrow">Familjeläge</p>
       <h1>Trygghetsöversikt i realtid</h1>
-      <p class="lead">Samma grundprincip: tydlig status, snabb åtgärd och logg. Nu med mer professionell dashboard-känsla.</p>
+      <p class="lead">När barnet håller inne knappen går en signal hit direkt. Här ser du notis, logg, screenshot (skärmbild) och vad som hände.</p>
     </header>
 
     <section class="kpi-grid" aria-label="Snabbstatus">
       <article class="panel kpi">
         <p class="kpi-label">Aktiv signal</p>
-        <p class="kpi-value success">Ingen aktiv paniksignal</p>
+        <p class="kpi-value" id="activeSignalValue">Ingen aktiv paniksignal</p>
       </article>
       <article class="panel kpi">
-        <p class="kpi-label">Senaste kontroll</p>
-        <p class="kpi-value">17 feb 2026 · 13:54</p>
+        <p class="kpi-label">Senaste larm</p>
+        <p class="kpi-value" id="latestAlarmValue">Ingen signal ännu</p>
       </article>
       <article class="panel kpi">
-        <p class="kpi-label">Responsmål</p>
-        <p class="kpi-value">&lt; 30 sekunder</p>
+        <p class="kpi-label">Totalt larm idag</p>
+        <p class="kpi-value" id="todayCountValue">0</p>
       </article>
     </section>
 
     <section class="grid">
+
+      <article class="panel">
+        <h2>Push-notiser (riktig notis)</h2>
+        <p id="pushStatusText" class="tiny">Kontrollerar push-status...</p>
+        <button id="enablePushBtn" type="button">Aktivera push-notiser</button>
+        <button id="disablePushBtn" type="button" class="ghost-btn">Stäng av push-notiser</button>
+      </article>
+
       <article class="panel">
         <h2>Snabbåtgärder</h2>
         <button data-action="Ring upp barnet">Ring upp barnet</button>
@@ -42,19 +50,34 @@
         <button data-action="Öppna delad plats">Öppna delad plats</button>
       </article>
 
+
       <article class="panel panel-wide">
-        <h2>Händelselogg (senaste 24 timmar)</h2>
-        <ul id="eventList">
-          <li><span>13:54</span> Testsignal mottagen</li>
-          <li><span>13:21</span> Position uppdaterad</li>
-          <li><span>11:07</span> Check-in klar</li>
-          <li><span>09:42</span> Appen öppnades i barnläge</li>
+        <h2>Incidentinkorg</h2>
+        <p id="newAlarmIndicator" class="new-alarm" hidden>Nytt larm mottaget</p>
+        <ul id="incidentInboxList" class="incident-list">
+          <li>Ingen incident ännu.</li>
         </ul>
+      </article>
+
+      <article class="panel panel-wide">
+        <h2>Händelselogg (senaste)</h2>
+        <ul id="eventList">
+          <li>Ingen händelse ännu.</li>
+        </ul>
+      </article>
+
+      <article class="panel panel-wide">
+        <h2>Senaste screenshot (skärmbild)</h2>
+        <p class="tiny">I den här webb-demo (testversion) visas en simulerad screenshot. Riktig screenshot från barnets mobil kräver native-app (mobilapp med systembehörighet).</p>
+        <div id="latestShotWrap" class="shot-wrap" hidden>
+          <img id="latestShot" alt="Senaste screenshot från barnets enhet" />
+        </div>
+        <p id="noShotText" class="tiny">Ingen screenshot ännu.</p>
       </article>
 
       <article class="panel panel-wide security-log">
         <h2>Säkerhetslogg (lokalt i denna enhet)</h2>
-        <p class="tiny">Visar senaste händelser för snabbåtgärder. Lagring sker i browsern via localStorage.</p>
+        <p class="tiny">Visar senaste händelser. Lagring sker i browsern via localStorage.</p>
         <ul id="securityLogList">
           <li>Ingen säkerhetslogg ännu.</li>
         </ul>

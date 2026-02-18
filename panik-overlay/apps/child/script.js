@@ -1,4 +1,9 @@
 const HOLD_DURATION_MS = 5000;
+const PANIC_INCIDENTS_KEY = "panicIncidents";
+const API_INCIDENTS_URL = "../../api/incidents";
+const DEFAULT_CHILD_ID = "child-demo-1";
+const DEFAULT_FAMILY_ID = "family-demo-1";
+
 const panicButton = document.getElementById("panic");
 const languageSelect = document.getElementById("languageSelect");
 const titleText = document.getElementById("titleText");
@@ -50,6 +55,14 @@ let countdownInterval = null;
 let startOffsetX = 0;
 let startOffsetY = 0;
 let pointerMoved = false;
+
+function getFamilyId() {
+  return localStorage.getItem("panicFamilyId") || DEFAULT_FAMILY_ID;
+}
+
+function getChildId() {
+  return localStorage.getItem("panicChildId") || DEFAULT_CHILD_ID;
+}
 
 function setLanguage(lang) {
   currentLanguage = messages[lang] ? lang : "sv";
@@ -152,7 +165,100 @@ function stopHold() {
   }
 }
 
-function triggerPanic(triggerType) {
+function encodeXml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function makeScreenshotPreview(payload) {
+  const line1 = encodeXml("Panikläge aktiverat");
+  const line2 = encodeXml(new Date(payload.timestamp).toLocaleString("sv-SE"));
+  const line3 = encodeXml(`Position: ${payload.location?.left || "?"}, ${payload.location?.top || "?"}`);
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='720' height='405'>
+    <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop stop-color='#040a1b'/><stop offset='1' stop-color='#153777'/></linearGradient></defs>
+    <rect width='100%' height='100%' fill='url(#g)'/>
+    <circle cx='620' cy='60' r='28' fill='#ff416b'/>
+    <text x='24' y='80' fill='#ffffff' font-size='40' font-family='Arial' font-weight='700'>Barnets enhet</text>
+    <text x='24' y='145' fill='#c5dbff' font-size='28' font-family='Arial'>${line1}</text>
+    <text x='24' y='195' fill='#c5dbff' font-size='24' font-family='Arial'>${line2}</text>
+    <text x='24' y='235' fill='#c5dbff' font-size='24' font-family='Arial'>${line3}</text>
+    <text x='24' y='360' fill='#86b7ff' font-size='20' font-family='Arial'>Demo-screenshot (plats för riktig native screenshot i nästa steg)</text>
+  </svg>`;
+
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+function buildIncident(payload) {
+  return {
+    id: `panic-${Date.now()}`,
+    childId: getChildId(),
+    familyId: getFamilyId(),
+    timestamp: payload.activatedAt,
+    status: "ny",
+    screenshotUrl: makeScreenshotPreview({
+      timestamp: payload.activatedAt,
+      location: payload.finalPosition
+    }),
+    location: {
+      left: payload.finalPosition.left,
+      top: payload.finalPosition.top
+    },
+    actions: [
+      "Skicka push-notis till föräldrar",
+      "Öppna familjens livevy",
+      "Spara händelse i logg"
+    ],
+    triggerType: payload.triggerType,
+    source: "child-app"
+  };
+}
+
+function saveIncidentLocal(incident) {
+  const current = JSON.parse(localStorage.getItem(PANIC_INCIDENTS_KEY) || "[]");
+  current.unshift(incident);
+  localStorage.setItem(PANIC_INCIDENTS_KEY, JSON.stringify(current.slice(0, 50)));
+}
+
+async function sendIncidentToApi(incident) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 4500);
+
+  try {
+    const response = await fetch(API_INCIDENTS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(incident),
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      throw new Error(`API-svar ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.incident || incident;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function saveIncident(incident) {
+  try {
+    const saved = await sendIncidentToApi(incident);
+    saveIncidentLocal(saved);
+    return { source: "api" };
+  } catch (error) {
+    saveIncidentLocal(incident);
+    console.warn("API ej nåbar, fallback till lokal lagring.", error.message);
+    return { source: "local" };
+  }
+}
+
+async function triggerPanic(triggerType) {
   panicButton.classList.add("triggered");
   panicButtonText.textContent = messages[currentLanguage].sent;
   statusText.textContent = messages[currentLanguage].activated;
@@ -174,7 +280,11 @@ function triggerPanic(triggerType) {
   };
 
   persistLog(payload);
-  activationLog.textContent = formatLog(payload);
+
+  const incident = buildIncident(payload);
+  const savedState = await saveIncident(incident);
+
+  activationLog.textContent = `${formatLog(payload)}\n\nIncident sparad via: ${savedState.source}`;
 
   if (window.gsap) {
     window.gsap.fromTo(
