@@ -48,12 +48,60 @@ body {
 }
 
 .hero,
-.panel {
+.panel,
+.lock-card {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 20px;
   padding: 1rem;
   backdrop-filter: blur(8px);
+}
+
+.lock-screen {
+  min-height: calc(100vh - 2rem);
+  display: grid;
+  place-items: center;
+}
+
+.lock-card {
+  width: min(460px, 100%);
+}
+
+.pin-form,
+.change-pin-form {
+  display: grid;
+  gap: 0.55rem;
+}
+
+label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+input {
+  width: 100%;
+  border-radius: 11px;
+  border: 1px solid rgba(160, 228, 255, 0.35);
+  background: rgba(7, 14, 30, 0.75);
+  color: var(--text);
+  padding: 0.74rem;
+  font-size: 1rem;
+}
+
+.pin-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.remember-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+}
+
+.remember-row input {
+  width: auto;
 }
 
 .back-link {
@@ -123,6 +171,11 @@ button {
 }
 
 button:hover { transform: translateY(-2px); }
+
+.ghost-btn {
+  background: transparent;
+  color: var(--accent);
+}
 
 ul {
   list-style: none;
