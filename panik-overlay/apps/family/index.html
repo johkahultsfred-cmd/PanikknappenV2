@@ -3,9 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (() => {
+      const { pathname, search, hash } = window.location;
+      if (!pathname.endsWith("/") && !pathname.endsWith(".html")) {
+        window.location.replace(`${pathname}/${search}${hash}`);
+      }
+    })();
+  </script>
   <title>Familjeläge – Panikknappen</title>
-  <link rel="stylesheet" href="/apps/family/style.css" />
-  <link rel="stylesheet" href="/assets/css/pwa.css" />
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="../../assets/css/pwa.css" />
 </head>
 <body>
   <div class="ambient ambient-a" aria-hidden="true"></div>
@@ -13,7 +21,7 @@
 
   <main class="family-shell" id="familyShell" aria-hidden="true" inert>
     <header class="hero">
-      <a class="back-link" href="/index.html">← Till appval</a>
+      <a class="back-link" href="../../index.html">← Till appval</a>
       <p class="eyebrow">Familjeläge</p>
       <h1>Trygghetsöversikt i realtid</h1>
       <p class="lead">Samma grundprincip: tydlig status, snabb åtgärd och logg. Nu med mer professionell dashboard-känsla.</p>
@@ -85,8 +93,8 @@
     </div>
   </section>
 
-  <script src="/apps/family/script.js" defer></script>
-  <script src="/assets/js/pwa.js"></script>
-  <script src="/assets/js/family-lock.js"></script>
+  <script src="./script.js" defer></script>
+  <script src="../../assets/js/pwa.js"></script>
+  <script src="../../assets/js/family-lock.js"></script>
 </body>
 </html>
