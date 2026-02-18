@@ -1,19 +1,9 @@
 const PARENT_CODE_LOCK_DISABLED = true;
 const TEST_PARENT_CODE = "1234";
 const SECURITY_LOG_KEY = "familySecurityLog";
-const SESSION_UNLOCK_KEY = "familyUnlockedAt";
-const AUTO_LOCK_MS = 5 * 60 * 1000;
 
-const familyShell = document.getElementById("familyShell");
-const parentLock = document.getElementById("parentLock");
-const codeForm = document.getElementById("codeForm");
-const parentCodeInput = document.getElementById("parentCodeInput");
-const lockMessage = document.getElementById("lockMessage");
 const securityLogList = document.getElementById("securityLogList");
 const eventList = document.getElementById("eventList");
-const lockAgainBtn = document.getElementById("lockAgainBtn");
-
-let autoLockTimer = null;
 
 function safeRead(key, fallback = null) {
   try {
@@ -34,15 +24,6 @@ function safeWrite(key, value) {
     return false;
   }
 }
-
-function safeRemove(key) {
-  try {
-    localStorage.removeItem(key);
-  } catch (error) {
-    console.warn("Kunde inte ta bort från localStorage:", error);
-  }
-}
-
 
 function nowLabel() {
   return new Date().toLocaleString("sv-SE", {
@@ -191,7 +172,6 @@ document.querySelectorAll("button[data-action]").forEach((button) => {
     const action = button.dataset.action;
     appendSecurityLog(`Snabbåtgärd använd: ${action}.`);
     addFamilyActionLog(`${action} (simulerad åtgärd)`);
-    resetAutoLock();
   });
 });
 
