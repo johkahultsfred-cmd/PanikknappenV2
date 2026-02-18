@@ -16,6 +16,17 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ---
 
+## Tillfälligt undantag (GitHub Pages på prov)
+
+> **Viktigt just nu:** Vi kör ett tillfälligt undantag där instruktioner om Netlify pausas tills vidare.
+>
+> Under provperioden gäller:
+> - Primärt deploy-spår är **GitHub Pages** (via GitHub Actions).
+> - Netlify-relaterade punkter i den här README:n och i andra guider räknas som **fallback** (reservspår), inte standard.
+> - Om en instruktion krockar: följ GitHub Pages-spåret först.
+
+---
+
 ## 2) Statuslogg (levande arbetsyta)
 
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
@@ -42,6 +53,12 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Förbättring klar: hook-läget stödjer nu hook-URL både via env (`NETLIFY_DEPLOY_HOOK_URL`) och direktargument samt städar temporärsvar med `mktemp`/`trap`.
 - Förbättring klar: hook-fel visar nu exakt 3-stegs återställning när Netlify svarar 404 (saknad/ogiltig hook).
 - Förbättring klar: scriptet validerar nu hook-URL-format tidigt och stoppar direkt om värdet inte är en Netlify-hook-länk.
+- Deployförsök (preview/testpublicering) kördes i container men stoppades korrekt när `NETLIFY_AUTH_TOKEN` saknas i non-interactive miljö.
+- Uppföljning klar: GitHub Secrets är ordnade, men lokal Codex-session behöver fortfarande `export NETLIFY_AUTH_TOKEN` innan manuell preview-deploy kan köras här.
+- Felsökning klar: GitHub Actions deploy använder nu `npx netlify-cli deploy --dir=.` i `panik-overlay` för att undvika `package.json`-fel i repo-roten.
+- Felsökning klar: GitHub Actions verifierar nu först `NETLIFY_AUTH_TOKEN` + `NETLIFY_SITE_ID` och väljer automatiskt `preview` på brancher samt `prod` på `main`.
+- Strategibyte klart: deploy-spåret går nu via GitHub Pages (GitHub-hosting) med nytt workflow för statisk publicering från `panik-overlay`.
+- Förtydligat: Netlify-workflow körs nu endast manuellt (workflow_dispatch) så GitHub Pages förblir huvudspår utan automatisk Netlify-körning på `main`.
 - Uppföljning klar: PR-spåret är flyttat till branch `Variant_3` för vidare ändringar i ett eget, tydligt arbetsflöde.
 
 ### Föreslagna nästa aktiviteter
@@ -50,8 +67,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
 
 ### Pågående aktivitet (nu)
-- Produktionsdeploy och verifiering av live-länk via giltig token/site-id, Build hook eller GitHub Actions-workflow.
-- Produktionsdeploy med riktig token/site-id i Netlify-konto för att verifiera live-länk efter scriptfix.
+- Verifiera GitHub Pages-deploy (publicering) via Actions och uppdatera live-länk i README (Netlify är pausad fallback under provperioden).
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
@@ -104,7 +120,7 @@ Efter installation öppnas appen i fristående läge (utan browserfält) och gru
 
 ---
 
-## 4) Netlify Deploy – enkel och pålitlig väg
+## 4) Netlify Deploy – pausad under GitHub Pages-provet
 
 Mål: få en **publik URL** för preview/test.
 
@@ -178,6 +194,31 @@ Netlify visar din live-länk i terminalen, t.ex.:
 > Tips: Spara länken direkt under sektion **6) Live-länk**.
 
 ---
+
+
+## 4.3 Deploy via GitHub Pages (helt gratis, primärt spår nu)
+
+Det här repo:t har nu workflow (automatiskt körflöde) i `.github/workflows/github-pages.yml` som publicerar mappen `panik-overlay` till GitHub Pages.
+
+### 4.3.1 Engångsinställning i GitHub (webb)
+1. Öppna repo:t i GitHub (webb).
+2. Klicka **Settings**.
+3. Klicka **Pages** i vänstermenyn.
+4. Under **Build and deployment** välj **Source: GitHub Actions**.
+
+### 4.3.2 Publicera (deploy)
+- Automatiskt: push till `main` triggar deploy.
+- Manuellt: **Actions** → **GitHub Pages Deploy** → **Run workflow**.
+
+Kör gärna lokal check först i repo-roten:
+
+```bash
+cd /workspace/PanikknappenV2/panik-overlay
+npm run check
+```
+
+När deploy är klar blir länken normalt:
+- `https://johkahultsfred-cmd.github.io/PanikknappenV2/`
 
 ## 5) Verifiering/checklista efter deploy
 

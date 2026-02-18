@@ -1,13 +1,11 @@
-name: Netlify Deploy
+name: Netlify Deploy (manuell fallback, pausad som standard)
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
   deploy:
+    if: ${{ vars.ENABLE_NETLIFY_FALLBACK == 'true' }}
     runs-on: ubuntu-latest
 
     defaults:
@@ -31,10 +29,30 @@ jobs:
       - name: Build project
         run: npm run build --if-present
 
-      - name: Netlify Deploy
-        uses: jsmrcaga/action-netlify-deploy@v2.4.0
-        with:
-          build_directory: panik-overlay
+      - name: Kontrollera Netlify-secrets
+        run: |
+          if [ -z "${NETLIFY_AUTH_TOKEN}" ]; then
+            echo "Fel: GitHub secret NETLIFY_AUTH_TOKEN saknas."
+            echo "Gå till GitHub > Settings > Secrets and variables > Actions och lägg till secret."
+            exit 1
+          fi
+          if [ -z "${NETLIFY_SITE_ID}" ]; then
+            echo "Fel: GitHub secret NETLIFY_SITE_ID saknas."
+            echo "Gå till GitHub > Settings > Secrets and variables > Actions och lägg till secret."
+            exit 1
+          fi
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Netlify Deploy (manuell fallback)
+        run: |
+          MODE="preview"
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            MODE="prod"
+          fi
+          echo "Deploy-läge: ${MODE}"
+          ../scripts/netlify-deploy.sh "${MODE}"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

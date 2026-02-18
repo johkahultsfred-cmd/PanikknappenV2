@@ -1,5 +1,10 @@
 # Netlify deploy-guide (snabb version)
 
+> **Tillfälligt undantag:** Netlify-spåret är pausat under GitHub Pages-provet.
+>
+> - Standard just nu: GitHub Pages (GitHub-hosting).
+> - Netlify-guiden nedan är fallback (reservspår) om du uttryckligen vill köra Netlify manuellt.
+
 Den här guiden är för dig som vill deploya (publicera till webben) med minsta möjliga steg.
 
 ## 1) Preview deploy (testlänk)
@@ -53,7 +58,7 @@ Ni har redan workflow-filen `.github/workflows/netlify-deploy.yml` (automatisk d
 Gör så här i **GitHub UI (webb)**:
 1. Öppna repo → fliken **Settings** → **Secrets and variables** → **Actions**.
 2. Lägg in secrets: `NETLIFY_AUTH_TOKEN` och `NETLIFY_SITE_ID`.
-3. Gå till fliken **Actions** → välj **Netlify Deploy** → klicka **Run workflow**.
+3. Gå till fliken **Actions** → välj **Netlify Deploy (manuell fallback, pausad som standard)** → klicka **Run workflow**.
 4. Följ loggen tills steg `Netlify Deploy` är grön.
 
 ## 3) Om login blockerar i container/Codex
