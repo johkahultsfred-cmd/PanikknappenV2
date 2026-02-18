@@ -5,10 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Panikknapp – Barnläge</title>
   <meta name="theme-color" content="#040a1b" />
-  <link rel="manifest" href="/manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="/assets/icons/icon.svg" />
-  <link rel="stylesheet" href="/apps/child/style.css" />
-  <link rel="stylesheet" href="/assets/css/pwa.css" />
+  <script>
+    (() => {
+      const { pathname, search, hash } = window.location;
+      if (!pathname.endsWith("/") && !pathname.endsWith(".html")) {
+        window.location.replace(`${pathname}/${search}${hash}`);
+      }
+    })();
+  </script>
+  <link rel="manifest" href="../../manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="../../assets/icons/icon.svg" />
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="../../assets/css/pwa.css" />
 </head>
 <body>
   <div class="ambient ambient-a" aria-hidden="true"></div>
@@ -16,7 +24,7 @@
 
   <main class="app-shell">
     <header class="topbar" aria-label="Inställningar">
-      <a class="back-link" href="/index.html">← Till appval</a>
+      <a class="back-link" href="../../index.html">← Till appval</a>
       <label for="languageSelect" id="languageLabel">Språk</label>
       <select id="languageSelect" aria-labelledby="languageLabel">
         <option value="sv">Svenska</option>
@@ -53,8 +61,8 @@
     </section>
   </main>
 
-  <script src="/assets/vendor/gsap.min.js"></script>
-  <script src="/apps/child/script.js"></script>
-  <script src="/assets/js/pwa.js"></script>
+  <script src="../../assets/vendor/gsap.min.js"></script>
+  <script src="./script.js"></script>
+  <script src="../../assets/js/pwa.js"></script>
 </body>
 </html>
