@@ -60,6 +60,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Strategibyte klart: deploy-spåret går nu via GitHub Pages (GitHub-hosting) med nytt workflow för statisk publicering från `panik-overlay`.
 - Förtydligat: Netlify-workflow körs nu endast manuellt (workflow_dispatch) så GitHub Pages förblir huvudspår utan automatisk Netlify-körning på `main`.
 - Uppföljning klar: PR-spåret är flyttat till branch `Variant_3` för vidare ändringar i ett eget, tydligt arbetsflöde.
+- Felsökning klar: barn- och familjesidan använder nu relativa filvägar (sökvägar utan inledande `/`) så CSS/JS/back-länkar fungerar även efter deploy på undersökväg (t.ex. GitHub Pages).
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -67,7 +68,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
 
 ### Pågående aktivitet (nu)
-- Verifiera GitHub Pages-deploy (publicering) via Actions och uppdatera live-länk i README (Netlify är pausad fallback under provperioden).
+- Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
