@@ -20,6 +20,19 @@ cd /workspace/PanikknappenV2
 ./scripts/netlify-deploy.sh prod
 ```
 
+
+## 2.1) Alternativ: deploy via Build hook (enkelt i CI utan token)
+
+Kör i **repo-roten** (`/workspace/PanikknappenV2`):
+
+```bash
+cd /workspace/PanikknappenV2
+export NETLIFY_DEPLOY_HOOK_URL='<din-build-hook-url>'
+./scripts/netlify-deploy.sh hook
+```
+
+Skapa hook i Netlify UI (webb): **Site configuration** → **Build & deploy** → **Build hooks** → **Add build hook**.
+
 ## 3) Om login blockerar i container/Codex
 
 Om Netlify CLI (terminalverktyg) ber om login (inloggning) och inte kan öppna browser automatiskt finns två vägar:
@@ -32,6 +45,8 @@ Om Netlify CLI (terminalverktyg) ber om login (inloggning) och inte kan öppna b
 ```bash
 cd /workspace/PanikknappenV2
 export NETLIFY_AUTH_TOKEN='<din-token>'
+# krävs i CI/container (non-interactive):
+export NETLIFY_SITE_ID='<din-site-id>'
 ./scripts/netlify-deploy.sh preview
 ```
 
@@ -40,6 +55,8 @@ För produktion:
 ```bash
 cd /workspace/PanikknappenV2
 export NETLIFY_AUTH_TOKEN='<din-token>'
+# krävs i CI/container (non-interactive):
+export NETLIFY_SITE_ID='<din-site-id>'
 ./scripts/netlify-deploy.sh prod
 ```
 
@@ -52,6 +69,9 @@ export NETLIFY_AUTH_TOKEN='<din-token>'
 
 - Preview: `npx --yes netlify-cli deploy --dir=panik-overlay`
 - Produktion: `npx --yes netlify-cli deploy --prod --dir=panik-overlay`
-- Om `NETLIFY_AUTH_TOKEN` finns lägger scriptet till `--auth <token>` automatiskt för non-interactive deploy (utan browser-login).
+- Hook-läge: `curl -X POST <build-hook-url>` via `./scripts/netlify-deploy.sh hook`
+- Om `NETLIFY_AUTH_TOKEN` finns kör scriptet non-interactive (utan browser-login) via Netlify CLI:s miljövariabel (miljöinställning).
+- Om `NETLIFY_SITE_ID` finns lägger scriptet till `--site <site-id>` för tydlig koppling mot rätt Netlify-site i CI/container.
+- I non-interactive miljö stoppar scriptet tidigt med tydligt fel om `NETLIFY_SITE_ID` saknas (för att undvika interaktiv prompt som fastnar).
 
 Det betyder att site-mappen (mappen som publiceras) alltid är `panik-overlay`.
