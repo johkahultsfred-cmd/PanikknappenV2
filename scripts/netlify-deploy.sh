@@ -3,10 +3,11 @@ set -euo pipefail
 
 MODE="${1:-preview}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SITE_DIR="$ROOT_DIR/panik-overlay"
+PUBLISH_DIR="$ROOT_DIR/panik-overlay"
 AUTH_TOKEN="${NETLIFY_AUTH_TOKEN:-}"
+SITE_ID="${NETLIFY_SITE_ID:-}"
 
-if [[ ! -d "$SITE_DIR" ]]; then
+if [[ ! -d "$PUBLISH_DIR" ]]; then
   echo "Fel: hittar inte mappen panik-overlay i repo-roten."
   exit 1
 fi
@@ -19,32 +20,42 @@ fi
 cd "$ROOT_DIR"
 
 echo "Kör Netlify deploy från: $ROOT_DIR"
+echo "Publicerar mapp: $PUBLISH_DIR"
+
+# Non-interactive miljö (utan terminalfönster): kräver token för att undvika browser-login.
+if [[ -z "$AUTH_TOKEN" && ! -t 1 ]]; then
+  echo "Fel: ingen terminal-session för browser-login och NETLIFY_AUTH_TOKEN saknas."
+  echo "Lösning:"
+  echo "  1) Skapa Personal Access Token i Netlify (User settings > Applications > Personal access tokens)."
+  echo "  2) Kör i repo-roten:"
+  echo "     export NETLIFY_AUTH_TOKEN='<din-token>'"
+  echo "  3) Kör deploy igen: ./scripts/netlify-deploy.sh $MODE"
+  exit 1
+fi
+
+DEPLOY_ARGS=(deploy --dir "$PUBLISH_DIR")
+
+if [[ "$MODE" == "prod" ]]; then
+  DEPLOY_ARGS+=(--prod)
+fi
+
+if [[ -n "$SITE_ID" ]]; then
+  echo "NETLIFY_SITE_ID hittades och skickas med till Netlify CLI."
+  DEPLOY_ARGS+=(--site "$SITE_ID")
+elif [[ ! -t 1 ]]; then
+  echo "Fel: NETLIFY_SITE_ID saknas i non-interactive miljö."
+  echo "Lösning:"
+  echo "  1) Hämta Site ID i Netlify (Site settings > General > Site details)."
+  echo "  2) Kör i repo-roten:"
+  echo "     export NETLIFY_SITE_ID='<din-site-id>'"
+  echo "  3) Kör deploy igen: ./scripts/netlify-deploy.sh $MODE"
+  exit 1
+fi
 
 if [[ -n "$AUTH_TOKEN" ]]; then
-  echo "NETLIFY_AUTH_TOKEN hittad: kör non-interactive deploy (utan browser-login)."
-  AUTH_ARGS=(--auth "$AUTH_TOKEN")
+  echo "NETLIFY_AUTH_TOKEN hittades och används för icke-interaktiv deploy."
 else
-  AUTH_ARGS=()
-  if [[ ! -t 1 ]]; then
-    echo "Fel: ingen terminal-session för browser-login och NETLIFY_AUTH_TOKEN saknas."
-    echo "Lösning:"
-    echo "  1) Skapa en Personal Access Token i Netlify (User settings > Applications > Personal access tokens)."
-    echo "  2) Kör i repo-roten:"
-    echo "     export NETLIFY_AUTH_TOKEN='<din-token>'"
-    echo "  3) Kör deploy igen: ./scripts/netlify-deploy.sh $MODE"
-    exit 1
-  fi
   echo "Tips: Om login krävs, öppna URL:en från terminalen i din vanliga browser och godkänn."
 fi
 
-AUTH_ARGS=()
-if [[ -n "${NETLIFY_AUTH_TOKEN:-}" ]]; then
-  echo "NETLIFY_AUTH_TOKEN hittades och används för icke-interaktiv deploy."
-  AUTH_ARGS+=(--auth "$NETLIFY_AUTH_TOKEN")
-fi
-
-if [[ "$MODE" == "prod" ]]; then
-  npx --yes netlify-cli deploy --prod --dir=panik-overlay "${AUTH_ARGS[@]}"
-else
-  npx --yes netlify-cli deploy --dir=panik-overlay "${AUTH_ARGS[@]}"
-fi
+npx --yes netlify-cli "${DEPLOY_ARGS[@]}"
