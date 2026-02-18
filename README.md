@@ -42,6 +42,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Förbättring klar: hook-läget stödjer nu hook-URL både via env (`NETLIFY_DEPLOY_HOOK_URL`) och direktargument samt städar temporärsvar med `mktemp`/`trap`.
 - Förbättring klar: hook-fel visar nu exakt 3-stegs återställning när Netlify svarar 404 (saknad/ogiltig hook).
 - Förbättring klar: scriptet validerar nu hook-URL-format tidigt och stoppar direkt om värdet inte är en Netlify-hook-länk.
+- Uppföljning klar: PR-spåret är flyttat till branch `Variant_3` för vidare ändringar i ett eget, tydligt arbetsflöde.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -268,4 +269,3 @@ Nu kräver familjeläget en 4-siffrig föräldrakod innan känsliga funktioner v
 1. Flytta kodverifiering till backend/API (serverkontroll) så PIN aldrig behöver lagras lokalt.
 2. Lägg till biometriskt lås (Face ID/Touch ID/fingeravtryck) via enhetens säkra funktioner när native wrapper finns.
 3. Lägg till adminflöde för återställning av kod via verifierad vuxenkontakt.
-
