@@ -43,6 +43,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Pågående aktivitet (nu)
 - Verifiera live-länk på riktig mobil (Android + iPhone) och bekräfta att appen installeras enligt respektive flöde.
+- Förbereda nästa steg för backend-koppling så nya premiumgränssnittet kan läsa riktig incidentdata.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
