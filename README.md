@@ -33,14 +33,15 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Ny to-do/funktionskarta är skapad i `to-do/readme.md` med uppdelning: klart, delvis klart, planerat och arkitekturstatus.
 - Portal, barnläge och familjeläge har fått ett nytt visuellt premiumlyft med responsiv layout, förbättrad typografi och tydligare CTA-kort.
 - GSAP (animationsbibliotek) är installerat och används lokalt via `assets/vendor/gsap.min.js` för mjuka mikroanimationer i barnläget.
+- Familjeläget har nu kodlås för föräldrafunktioner med initial testkod `1234`, lokal säkerhetslogg och automatisk låsning efter inaktivitet (5 minuter).
 
 ### Föreslagna nästa aktiviteter
-1. Bekräfta om serverdel ska ligga i samma repo eller separat repo.
-2. Om separat server: dokumentera exakt WS/API-kontrakt i README.
-3. Koppla familjeappens knappar till riktig data/API när backend finns.
+1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
+2. Koppla familjeappens snabbåtgärder till riktig backend/API i stället för simulerad logg.
+3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
 
 ### Pågående aktivitet (nu)
-- Förbereda nästa steg för backend-koppling så nya premiumgränssnittet kan läsa riktig incidentdata.
+- Förbereda backend-koppling för säkrare inloggning i familjeläge och central loggdelning mellan enheter.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
@@ -49,6 +50,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
 - Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att CLI-login är klart.
+- Flytta föräldrakod till servervalidering för att undvika att kod ligger synligt i klientkod.
 
 ---
 
