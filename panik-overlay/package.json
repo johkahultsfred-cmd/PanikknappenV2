@@ -4,6 +4,7 @@
   "private": true,
   "description": "Webbapp med barnläge och familjeläge för Panikknappen",
   "scripts": {
+    "check": "node -e \"const fs=require('fs');['index.html','assets/css/portal.css','assets/vendor/gsap.min.js','apps/child/index.html','apps/child/style.css','apps/child/script.js','apps/family/index.html','apps/family/style.css','assets/js/family-lock.js'].forEach(f=>{if(!fs.existsSync(f)){throw new Error('Saknar fil: '+f)}}); console.log('OK: appstruktur finns');\"",
     "check": "node -e \"const fs=require('fs');['index.html','assets/css/portal.css','assets/vendor/gsap.min.js','apps/child/index.html','apps/child/style.css','apps/child/script.js','apps/family/index.html','apps/family/style.css','apps/family/script.js'].forEach(f=>{if(!fs.existsSync(f)){throw new Error('Saknar fil: '+f)}}); console.log('OK: appstruktur finns');\"",
     "preview": "npx --yes serve . -l 4173"
   },
