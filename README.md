@@ -33,6 +33,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Ny to-do/funktionskarta är skapad i `to-do/readme.md` med uppdelning: klart, delvis klart, planerat och arkitekturstatus.
 - Portal, barnläge och familjeläge har fått ett nytt visuellt premiumlyft med responsiv layout, förbättrad typografi och tydligare CTA-kort.
 - GSAP (animationsbibliotek) är installerat och används lokalt via `assets/vendor/gsap.min.js` för mjuka mikroanimationer i barnläget.
+- Familjeläget är nu låst med föräldrakod (PIN/kod) där initial testkod är `1234`, med spärr efter upprepade fel, automatisk bakgrundslåsning och möjlighet att byta kod i appen.
 
 ### Föreslagna nästa aktiviteter
 1. Bekräfta om serverdel ska ligga i samma repo eller separat repo.
@@ -41,11 +42,13 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Pågående aktivitet (nu)
 - Förbereda nästa steg för backend-koppling så nya premiumgränssnittet kan läsa riktig incidentdata.
+- Finslipa åtkomstskyddet för föräldradelen så det blir ännu enklare att drifta i skarp miljö.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
 - Lägga till fler språk än svenska/engelska (enligt prioritering).
 - Ersätta mockdata (testdata) i familjeappen med riktig data.
+- Flytta föräldrakod från lokal lagring till säkrare serverkontroll när backend är redo.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
 - Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att CLI-login är klart.
@@ -235,3 +238,27 @@ För att göra allt ännu mer noob-vänligt gäller följande när AI-agenten hj
 3. Om ett terminalkommando behövs ska AI alltid skriva:
    - exakt copy/paste-kommando,
    - var det körs (repo-rot, undermapp, eller i Netlify/GitHub UI).
+
+---
+
+## 10) Föräldrakod i familjeläge (webb + mobil/PWA)
+
+Nu kräver familjeläget en 4-siffrig föräldrakod innan känsliga funktioner visas.
+
+### Så funkar det nu
+- Initial testkod: `1234`.
+- Efter 3 felaktiga försök: tillfällig spärr i 30 sekunder (med nedräkning i UI).
+- Valbar "kom ihåg denna enhet" i 15 minuter.
+- Möjlighet att byta kod direkt i familjelägets föräldrainställningar.
+- Enkel händelselogg sparas lokalt i browsern (localStorage).
+- PIN lagras nu som hash (krypterad kontrollsträng) + salt istället för klartext i lokal lagring.
+
+### Varför detta fungerar i både webb och mobil
+- Mobilappen här är PWA (installerad webbapp), så samma kodlås körs i browser och i installerat app-läge.
+- Ingen separat implementation behövs just nu för iOS/Android så länge familjeläget körs från samma webbapp.
+
+### Smart nästa nivå (rekommenderat)
+1. Flytta kodverifiering till backend/API (serverkontroll) så PIN aldrig behöver lagras lokalt.
+2. Lägg till biometriskt lås (Face ID/Touch ID/fingeravtryck) via enhetens säkra funktioner när native wrapper finns.
+3. Lägg till adminflöde för återställning av kod via verifierad vuxenkontakt.
+
