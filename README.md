@@ -63,6 +63,12 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Felsökning klar: barn- och familjesidan använder nu relativa filvägar (sökvägar utan inledande `/`) så CSS/JS/back-länkar fungerar även efter deploy på undersökväg (t.ex. GitHub Pages).
 - Felsökning klar (2026-02-18): föräldralåset i familjeläget respekterar nu `hidden`-attributet i CSS, så korrekt kod (`1234`) döljer låsskärmen och släpper fram dashboarden som tänkt.
 - Ändring klar (2026-02-18): kodlåset i familjeläget är tillfälligt avstängt så sidan öppnas direkt utan kod medan vidare felsökning pågår.
+- Ändring klar (2026-02-18): barnläget skickar nu incidenter till gemensam larminkorg (lokal demo) och familjeläget visar dessa med status, tidsstämpel och demo-screenshot.
+- Justering klar (2026-02-18): tidigare `?simple=1`-spår är borttaget igen efter feedback.
+- Ny demo klar (2026-02-18): barnets knapp skickar nu incidentdata till familjeläget (lokalt), med notisbar logg, säkerhetssteg och simulerad screenshot i föräldravy.
+- Ändring klar (2026-02-18): familjeläget visar nu riktig larminkorg från barnappen (lokal incidentlogg) med tidsstämpel, status och skärmbild (SVG-bild från knappen) samt knapp för att markera larm som hanterat.
+- MVP klar (2026-02-18): lokal Node-backend (`panik-overlay/server/api-server.js`) med API-endpoints för incidenter är tillagd och barn/familj använder API med fallback till localStorage.
+- Nyhet klar (2026-02-18): riktig Web Push-grund är inkopplad med VAPID-nycklar, server-endpoints för subscription och push-notis till familjeläge när barnincident skapas.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -82,6 +88,8 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
 - Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att CLI-login är klart eller `NETLIFY_AUTH_TOKEN` + `NETLIFY_SITE_ID` är satta i miljön.
 - Flytta föräldrakod till servervalidering för att undvika att kod ligger synligt i klientkod.
+- Bygg riktig push-notis (mobilnotis) + backend-lagring så familjen får signal även på annan enhet än samma browser-data.
+- För notiser mellan olika telefoner behövs backend + push-tjänst (server + push), lokal demo visar idag flödet i browsern och är nästa steg att koppla till riktig server.
 
 ---
 
@@ -122,7 +130,60 @@ När sajten ligger på HTTPS (säker webb-länk, t.ex. Netlify) kan mobilen erbj
 
 Efter installation öppnas appen i fristående läge (utan browserfält) och grundsidorna fungerar även offline via service worker (cache-lager lokalt i mobilen).
 
+Tips för två ikoner på olika enheter:
+- Barnets enhet: öppna `.../apps/child/` och välj **Lägg till på hemskärmen**.
+- Förälderns enhet: öppna `.../apps/family/` och lägg till den som egen ikon.
+- Test med två telefoner: öppna barnlänken i barnets telefon och familjelänken i förälderns telefon. Trigga sedan barnknappen och kontrollera incident i familjeläget.
+- Lokal körning i repo-roten (för API + app tillsammans):
+```bash
+cd /workspace/PanikknappenV2/panik-overlay
+npm run preview
+```
+- Aktivera push i förälderns app: öppna `.../apps/family/` och tryck **Aktivera push-notiser**.
+- Tillåt notiser när browsern frågar om tillstånd.
+
 ---
+
+
+## 3.3 Arkitektur nu och nästa steg (enkel plan)
+
+### Nu (MVP i repo:t)
+- Barnapp skickar incident till `POST /api/incidents`.
+- Familjeapp hämtar incidenter från `GET /api/incidents?familyId=...`.
+- Familjeapp kan markera hanterad via `PATCH /api/incidents/:id`.
+- Om API inte svarar används fallback i `localStorage` (lokal lagring i browsern).
+
+### Nästa steg för riktig cross-device (mellan olika telefoner)
+1. Flytta API till driftad backend (server) med riktig databas.
+2. Lagra push-token per föräldraenhet.
+3. Skicka push-notis när ny incident skapas.
+4. Behåll polling (hämtning var 10:e sekund) som reserv.
+5. Verifiera notis i installerad PWA på förälderns enhet.
+
+### Föreslagen minimal backend
+- Server: Node.js API (enkel serverdel).
+- Databas: Postgres (SQL-databas) eller Supabase.
+- Push: Web Push (browser-notiser) är nu inkopplad lokalt med VAPID, och kan senare bytas/kompletteras med Firebase Cloud Messaging.
+
+
+### Nya push-endpoints i MVP
+- `GET /api/push/public-key`
+- `POST /api/push/subscribe`
+- `POST /api/push/unsubscribe`
+
+### Enkel incidentmodell
+```json
+{
+  "id": "uuid",
+  "childId": "child-demo-1",
+  "familyId": "family-demo-1",
+  "timestamp": "2026-02-18T20:00:00.000Z",
+  "status": "ny",
+  "screenshotUrl": "https://... eller data-url",
+  "location": { "left": "120px", "top": "340px" },
+  "actions": ["Skicka push", "Spara logg"]
+}
+```
 
 ## 4) Netlify Deploy – pausad under GitHub Pages-provet
 
@@ -223,6 +284,22 @@ npm run check
 
 När deploy är klar blir länken normalt:
 - `https://johkahultsfred-cmd.github.io/PanikknappenV2/`
+
+
+### 4.4 Krav i GitHub/Netlify för live API + app
+1. **GitHub (webb):** pusha ändringar till branch och mergea till `main`.
+2. **Netlify (webb):** Site settings → Build & deploy → Publish directory = `panik-overlay`.
+3. Om du vill köra separat backend senare: sätt `API_BASE_URL` som miljövariabel i Netlify under **Site settings → Environment variables**.
+4. Kör deploy (publicera) med:
+```bash
+cd /workspace/PanikknappenV2
+netlify deploy --dir=panik-overlay
+```
+Produktion:
+```bash
+cd /workspace/PanikknappenV2
+netlify deploy --prod --dir=panik-overlay
+```
 
 ## 5) Verifiering/checklista efter deploy
 
