@@ -60,12 +60,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Strategibyte klart: deploy-spåret går nu via GitHub Pages (GitHub-hosting) med nytt workflow för statisk publicering från `panik-overlay`.
 - Förtydligat: Netlify-workflow körs nu endast manuellt (workflow_dispatch) så GitHub Pages förblir huvudspår utan automatisk Netlify-körning på `main`.
 - Uppföljning klar: PR-spåret är flyttat till branch `Variant_3` för vidare ändringar i ett eget, tydligt arbetsflöde.
-- Felsökning klar: portal, barn och familj har nu relativa sökvägar + tidig URL-normalisering till avslutande snedstreck (`/.../`) så resurser och kodupplåsning fungerar både på domänrot och i undermapp (t.ex. GitHub Pages).
-- Felsökning klar: GitHub Pages-workflow använder nu separata build/deploy-jobb med explicit `environment: github-pages` och tydliga permissions för att minska 401/"Bad credentials" vid deploy-steget.
-- Stabiliseringssteg klart: ny guide `STABILISERING.md` beskriver konfliktfri sökvägsstrategi, rebase-rutin och testmatris för rot/undermapp före merge.
-- Felsökning klar: familjelägets upplåsning använder nu safe-hantering av localStorage (med fallback) så vyn öppnas även om browsern blockerar lagring i den aktuella sessionen.
-- Felsökning klar: familjelåset dolde sig inte visuellt trots godkänd kod eftersom CSS-regeln `.parent-lock { display: grid; }` överstyrde HTML-attributet `hidden`; ny regel `.parent-lock[hidden] { display: none; }` löser detta.
-- Felsökning klar: familjelägets säkerhetslogg kunde vara trasig JSON i localStorage, vilket stoppade upplåsningen efter texten "Kod godkänd"; läsning har nu fallback och återställning så användaren kommer vidare.
+- Felsökning klar: barn- och familjesidan använder nu relativa filvägar (sökvägar utan inledande `/`) så CSS/JS/back-länkar fungerar även efter deploy på undersökväg (t.ex. GitHub Pages).
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -73,7 +68,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
 
 ### Pågående aktivitet (nu)
-- Verifiera online-deploy efter URL-normalisering och säkerställ att familjeläge kan låsas upp med kod även i undermappsläge.
+- Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
