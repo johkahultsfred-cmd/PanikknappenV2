@@ -36,8 +36,6 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Familjeläget har nu kodlås för föräldrafunktioner med initial testkod `1234`, lokal säkerhetslogg och automatisk låsning efter inaktivitet (5 minuter).
 - Felsökning klar: `panik-overlay/package.json` hade dubbla `check`-nycklar (konfigurationsfält), nu ersatt med en enda check som verifierar både familjeläge-script och lås-script.
 - Felsökning klar: `scripts/netlify-deploy.sh` använder nu samma argumentkedja utan dubbletter och stödjer även `NETLIFY_SITE_ID` (site-id för direkt koppling i CI/container).
-- Förbättring klar: deploy-scriptet använder nu absolut publish-mapp, undviker `--auth`-flagga och stoppar tidigt med tydligt fel om site-id saknas i non-interactive miljö.
-- Förbättring klar: deploy-scriptet har nu även `hook`-läge med `NETLIFY_DEPLOY_HOOK_URL` (build hook-länk) för enkel trigger i CI utan CLI-login.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -45,7 +43,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
 
 ### Pågående aktivitet (nu)
-- Produktionsdeploy och verifiering av live-länk via giltig token/site-id eller Build hook i Netlify-konto.
+- Produktionsdeploy med riktig token/site-id i Netlify-konto för att verifiera live-länk efter scriptfix.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
