@@ -47,6 +47,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
 - Lägga till fler språk än svenska/engelska (enligt prioritering).
 - Ersätta mockdata (testdata) i familjeappen med riktig data.
+- Flytta föräldrakod från lokal lagring till säkrare serverkontroll när backend är redo.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
 - Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att CLI-login är klart.
@@ -237,3 +238,26 @@ För att göra allt ännu mer noob-vänligt gäller följande när AI-agenten hj
 3. Om ett terminalkommando behövs ska AI alltid skriva:
    - exakt copy/paste-kommando,
    - var det körs (repo-rot, undermapp, eller i Netlify/GitHub UI).
+
+---
+
+## 9) Föräldrakod i familjeläge (webb + mobil/PWA)
+
+Nu kräver familjeläget en 4-siffrig föräldrakod innan känsliga funktioner visas.
+
+### Så funkar det nu
+- Initial testkod: `1234`.
+- Efter 3 felaktiga försök: tillfällig spärr i 30 sekunder.
+- Valbar "kom ihåg denna enhet" i 15 minuter.
+- Möjlighet att byta kod direkt i familjelägets föräldrainställningar.
+- Enkel händelselogg sparas lokalt i browsern (localStorage).
+
+### Varför detta fungerar i både webb och mobil
+- Mobilappen här är PWA (installerad webbapp), så samma kodlås körs i browser och i installerat app-läge.
+- Ingen separat implementation behövs just nu för iOS/Android så länge familjeläget körs från samma webbapp.
+
+### Smart nästa nivå (rekommenderat)
+1. Flytta kodverifiering till backend/API (serverkontroll) så PIN aldrig behöver lagras lokalt.
+2. Lägg till biometriskt lås (Face ID/Touch ID/fingeravtryck) via enhetens säkra funktioner när native wrapper finns.
+3. Lägg till adminflöde för återställning av kod via verifierad vuxenkontakt.
+
