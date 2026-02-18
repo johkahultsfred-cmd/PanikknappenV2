@@ -3,14 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script>
-    (() => {
-      const { pathname, search, hash } = window.location;
-      if (!pathname.endsWith("/") && !pathname.endsWith(".html")) {
-        window.location.replace(`${pathname}/${search}${hash}`);
-      }
-    })();
-  </script>
   <title>Familjeläge – Panikknappen</title>
   <link rel="stylesheet" href="./style.css" />
   <link rel="stylesheet" href="../../assets/css/pwa.css" />
@@ -19,13 +11,12 @@
   <div class="ambient ambient-a" aria-hidden="true"></div>
   <div class="ambient ambient-b" aria-hidden="true"></div>
 
-  <main class="family-shell" id="familyShell" aria-hidden="true" inert>
+  <main class="family-shell" id="familyShell">
     <header class="hero">
       <a class="back-link" href="../../index.html">← Till appval</a>
       <p class="eyebrow">Familjeläge</p>
       <h1>Trygghetsöversikt i realtid</h1>
       <p class="lead">Samma grundprincip: tydlig status, snabb åtgärd och logg. Nu med mer professionell dashboard-känsla.</p>
-      <button id="lockAgainBtn" class="ghost-btn" type="button">Lås familjeläge igen</button>
     </header>
 
     <section class="kpi-grid" aria-label="Snabbstatus">
@@ -63,7 +54,7 @@
 
       <article class="panel panel-wide security-log">
         <h2>Säkerhetslogg (lokalt i denna enhet)</h2>
-        <p class="tiny">Visar senaste händelser för kodlås och åtgärder. Lagring sker i browsern via localStorage.</p>
+        <p class="tiny">Visar senaste händelser för snabbåtgärder. Lagring sker i browsern via localStorage.</p>
         <ul id="securityLogList">
           <li>Ingen säkerhetslogg ännu.</li>
         </ul>
@@ -71,30 +62,7 @@
     </section>
   </main>
 
-  <section id="parentLock" class="parent-lock" aria-live="polite">
-    <div class="lock-card" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
-      <p class="eyebrow">Skyddat läge</p>
-      <h2 id="lockTitle">Föräldrakod krävs</h2>
-      <p class="lock-copy">Ange föräldrakoden för att öppna familjefunktionerna. Initial testkod är <strong>1234</strong>.</p>
-      <form id="codeForm" class="code-form">
-        <label for="parentCodeInput">Kod</label>
-        <input id="parentCodeInput" inputmode="numeric" pattern="[0-9]*" minlength="4" maxlength="8" autocomplete="off" placeholder="••••" required />
-        <button type="submit">Lås upp</button>
-      </form>
-      <p id="lockMessage" class="lock-message">Tips: byt kod i inställningar innan skarp drift.</p>
-      <details>
-        <summary>Smart nästa nivå (förslag)</summary>
-        <ul class="ideas">
-          <li>Byt från fast testkod till personlig PIN + hash (krypterat fingeravtryck av koden).</li>
-          <li>Lägg till timeout (automatisk låsning) efter inaktivitet.</li>
-          <li>Komplettera med biometrisk upplåsning i mobilskal (Face ID/Touch ID via native wrapper).</li>
-        </ul>
-      </details>
-    </div>
-  </section>
-
   <script src="./script.js" defer></script>
   <script src="../../assets/js/pwa.js"></script>
-  <script src="../../assets/js/family-lock.js"></script>
 </body>
 </html>

@@ -1,18 +1,7 @@
-const TEST_PARENT_CODE = "1234";
 const SECURITY_LOG_KEY = "familySecurityLog";
-const SESSION_UNLOCK_KEY = "familyUnlockedAt";
-const AUTO_LOCK_MS = 5 * 60 * 1000;
 
-const familyShell = document.getElementById("familyShell");
-const parentLock = document.getElementById("parentLock");
-const codeForm = document.getElementById("codeForm");
-const parentCodeInput = document.getElementById("parentCodeInput");
-const lockMessage = document.getElementById("lockMessage");
 const securityLogList = document.getElementById("securityLogList");
 const eventList = document.getElementById("eventList");
-const lockAgainBtn = document.getElementById("lockAgainBtn");
-
-let autoLockTimer = null;
 
 function safeRead(key, fallback = null) {
   try {
@@ -33,15 +22,6 @@ function safeWrite(key, value) {
     return false;
   }
 }
-
-function safeRemove(key) {
-  try {
-    localStorage.removeItem(key);
-  } catch (error) {
-    console.warn("Kunde inte ta bort från localStorage:", error);
-  }
-}
-
 
 function nowLabel() {
   return new Date().toLocaleString("sv-SE", {
@@ -90,61 +70,6 @@ function renderSecurityLog() {
     .join("");
 }
 
-function setLockedState(isLocked) {
-  familyShell.dataset.locked = String(isLocked);
-  familyShell.ariaHidden = String(isLocked);
-
-  if (isLocked) {
-    familyShell.setAttribute("inert", "");
-    parentLock.hidden = false;
-    parentCodeInput.value = "";
-    parentCodeInput.focus();
-    lockMessage.textContent = "Ange koden för att öppna familjeläge.";
-    lockMessage.classList.remove("error");
-    return;
-  }
-
-  familyShell.removeAttribute("inert");
-  parentLock.hidden = true;
-}
-
-function markUnlocked() {
-  const persisted = safeWrite(SESSION_UNLOCK_KEY, String(Date.now()));
-  setLockedState(false);
-  appendSecurityLog("Familjeläge upplåst med kod.");
-  if (!persisted) {
-    appendSecurityLog("Varning: session kunde inte sparas i localStorage. Upplåsning fungerar ändå för denna vy.");
-  }
-  resetAutoLock();
-}
-
-function shouldStayUnlocked() {
-  const unlockedAt = Number(safeRead(SESSION_UNLOCK_KEY, "0") || "0");
-  if (!unlockedAt) return false;
-  return Date.now() - unlockedAt < AUTO_LOCK_MS;
-}
-
-function lockFamily(reason) {
-  safeRemove(SESSION_UNLOCK_KEY);
-  appendSecurityLog(reason || "Familjeläge låstes.");
-  setLockedState(true);
-
-  if (autoLockTimer) {
-    window.clearTimeout(autoLockTimer);
-    autoLockTimer = null;
-  }
-}
-
-function resetAutoLock() {
-  if (autoLockTimer) {
-    window.clearTimeout(autoLockTimer);
-  }
-
-  autoLockTimer = window.setTimeout(() => {
-    lockFamily("Automatisk låsning efter inaktivitet.");
-  }, AUTO_LOCK_MS);
-}
-
 function addFamilyActionLog(actionText) {
   const item = document.createElement("li");
   item.innerHTML = `<span>${nowLabel()}</span> ${actionText}`;
@@ -155,48 +80,13 @@ function addFamilyActionLog(actionText) {
   }
 }
 
-codeForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const enteredCode = parentCodeInput.value.trim();
-
-  if (enteredCode === TEST_PARENT_CODE) {
-    lockMessage.textContent = "Kod godkänd. Familjeläge öppnas.";
-    lockMessage.classList.remove("error");
-    markUnlocked();
-    return;
-  }
-
-  lockMessage.textContent = "Fel kod. Försök igen.";
-  lockMessage.classList.add("error");
-  appendSecurityLog("Misslyckat kodförsök i familjeläge.");
-  parentCodeInput.select();
-});
-
-lockAgainBtn.addEventListener("click", () => {
-  lockFamily("Manuell låsning via knappen 'Lås familjeläge igen'.");
-});
-
 document.querySelectorAll("button[data-action]").forEach((button) => {
   button.addEventListener("click", () => {
     const action = button.dataset.action;
     appendSecurityLog(`Snabbåtgärd använd: ${action}.`);
     addFamilyActionLog(`${action} (simulerad åtgärd)`);
-    resetAutoLock();
   });
 });
 
-["click", "keydown", "touchstart"].forEach((eventName) => {
-  familyShell.addEventListener(eventName, () => {
-    if (parentLock.hidden) resetAutoLock();
-  });
-});
-
-if (shouldStayUnlocked()) {
-  setLockedState(false);
-  appendSecurityLog("Familjeläge återöppnades via aktiv session.");
-  resetAutoLock();
-} else {
-  setLockedState(true);
-}
-
+appendSecurityLog("Familjeläge öppnades direkt utan kodlås (tillfälligt).");
 renderSecurityLog();
