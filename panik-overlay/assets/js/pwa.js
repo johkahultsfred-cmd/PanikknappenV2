@@ -55,11 +55,17 @@ function createBanner(message, installable = false) {
   return banner;
 }
 
+function resolveServiceWorkerUrl() {
+  const { pathname, href } = window.location;
+  const isAppSubpage = /\/apps\/(child|family)(\/|$)/.test(pathname);
+  return isAppSubpage ? new URL("../../sw.js", href) : new URL("./sw.js", href);
+}
+
 function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
 
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch((error) => {
+    navigator.serviceWorker.register(resolveServiceWorkerUrl()).catch((error) => {
       console.warn("Service worker kunde inte registreras:", error);
     });
   });
