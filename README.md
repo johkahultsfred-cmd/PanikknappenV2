@@ -65,6 +65,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Stabiliseringssteg klart: ny guide `STABILISERING.md` beskriver konfliktfri sökvägsstrategi, rebase-rutin och testmatris för rot/undermapp före merge.
 - Felsökning klar: familjelägets upplåsning använder nu safe-hantering av localStorage (med fallback) så vyn öppnas även om browsern blockerar lagring i den aktuella sessionen.
 - Felsökning klar: familjelåset dolde sig inte visuellt trots godkänd kod eftersom CSS-regeln `.parent-lock { display: grid; }` överstyrde HTML-attributet `hidden`; ny regel `.parent-lock[hidden] { display: none; }` löser detta.
+- Felsökning klar: familjelägets säkerhetslogg kunde vara trasig JSON i localStorage, vilket stoppade upplåsningen efter texten "Kod godkänd"; läsning har nu fallback och återställning så användaren kommer vidare.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).

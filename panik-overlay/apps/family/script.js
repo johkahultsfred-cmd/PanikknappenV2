@@ -54,7 +54,16 @@ function nowLabel() {
 }
 
 function readSecurityLog() {
-  return JSON.parse(safeRead(SECURITY_LOG_KEY, "[]") || "[]");
+  const raw = safeRead(SECURITY_LOG_KEY, "[]") || "[]";
+
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn("Säkerhetslogg var trasig JSON och återställdes:", error);
+    safeWrite(SECURITY_LOG_KEY, "[]");
+    return [];
+  }
 }
 
 function saveSecurityLog(logItems) {
@@ -101,11 +110,11 @@ function setLockedState(isLocked) {
 
 function markUnlocked() {
   const persisted = safeWrite(SESSION_UNLOCK_KEY, String(Date.now()));
+  setLockedState(false);
   appendSecurityLog("Familjeläge upplåst med kod.");
   if (!persisted) {
     appendSecurityLog("Varning: session kunde inte sparas i localStorage. Upplåsning fungerar ändå för denna vy.");
   }
-  setLockedState(false);
   resetAutoLock();
 }
 
