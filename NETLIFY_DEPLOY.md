@@ -9,29 +9,26 @@ Den här guiden är för dig som vill deploya (publicera till webben) med minsta
 
 ## 1) Preview deploy (testlänk)
 
-Kör i **repo-roten** (`/workspace/PanikknappenV2`):
+Kör i **repo-roten** (projektmapp på GitHub):
 
 ```bash
-cd /workspace/PanikknappenV2
 ./scripts/netlify-deploy.sh preview
 ```
 
 ## 2) Produktionsdeploy (live-länk)
 
-Kör i **repo-roten** (`/workspace/PanikknappenV2`):
+Kör i **repo-roten** (projektmapp på GitHub):
 
 ```bash
-cd /workspace/PanikknappenV2
 ./scripts/netlify-deploy.sh prod
 ```
 
 
 ## 2.1) Alternativ: deploy via Build hook (enkelt i CI utan token)
 
-Kör i **repo-roten** (`/workspace/PanikknappenV2`):
+Kör i **repo-roten** (projektmapp på GitHub):
 
 ```bash
-cd /workspace/PanikknappenV2
 export NETLIFY_DEPLOY_HOOK_URL='<din-build-hook-url>'
 ./scripts/netlify-deploy.sh hook
 # eller skicka URL direkt:
@@ -71,7 +68,6 @@ Om Netlify CLI (terminalverktyg) ber om login (inloggning) och inte kan öppna b
 3. Kör i **repo-roten**:
 
 ```bash
-cd /workspace/PanikknappenV2
 export NETLIFY_AUTH_TOKEN='<din-token>'
 # krävs i CI/container (non-interactive):
 # valfritt men rekommenderat i CI/container:
@@ -82,7 +78,6 @@ export NETLIFY_SITE_ID='<din-site-id>'
 För produktion:
 
 ```bash
-cd /workspace/PanikknappenV2
 export NETLIFY_AUTH_TOKEN='<din-token>'
 # krävs i CI/container (non-interactive):
 # valfritt men rekommenderat i CI/container:
