@@ -69,6 +69,9 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Ändring klar (2026-02-18): familjeläget visar nu riktig larminkorg från barnappen (lokal incidentlogg) med tidsstämpel, status och skärmbild (SVG-bild från knappen) samt knapp för att markera larm som hanterat.
 - MVP klar (2026-02-18): lokal Node-backend (`panik-overlay/server/api-server.js`) med API-endpoints för incidenter är tillagd och barn/familj använder API med fallback till localStorage.
 - Nyhet klar (2026-02-18): riktig Web Push-grund är inkopplad med VAPID-nycklar, server-endpoints för subscription och push-notis till familjeläge när barnincident skapas.
+- Plan klar (2026-02-23): native-spår (riktig mobilapp) är beskrivet steg-för-steg för overlay över andra appar, bakgrundsspårning och säker larmkedja.
+- Dokumentation fixad (2026-02-23): kommandon är nu relative (relativa sökvägar), så samma copy/paste fungerar i macOS/Linux och Windows PowerShell utan `/workspace/...`.
+- Dokumentation fixad (2026-02-23): alla kvarvarande `/workspace/...`-rader i README + NETLIFY_DEPLOY är borttagna för att undvika Windows-felet `Set-Location: Cannot find path`.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -78,6 +81,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 ### Pågående aktivitet (nu)
 - Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
 - Planera när föräldrakod ska slås på igen efter att åtkomstflödet är stabilt.
+- Bryta ut native-MVP (första fungerande mobilversion) med overlay-behörighet i Android och samma API-flöde som webbappen.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
@@ -93,12 +97,73 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ---
 
-## 3) Snabbstart lokalt (exakt steg-för-steg)
+## 3.4 Native-spår (riktig mobilapp) – enkel 3-stegsplan
 
-Kör dessa kommandon i terminalen från repo-roten (`/workspace/PanikknappenV2`):
+Detta spår behövs om målet är en knapp som kan ligga över andra appar/spel (system-overlay) på samma sätt som skärminspelningsappar.
+
+### Steg 1: Android wrapper (mobilskal) runt nuvarande app
+Mål: återanvänd nuvarande UI (gränssnitt) men köra som native-app (riktig mobilapp).
+
+Kör i **repo-roten** (projektmapp på GitHub):
 
 ```bash
-cd /workspace/PanikknappenV2
+# Alla plattformar (macOS/Linux/Windows PowerShell)
+# Tips: öppna terminalen direkt i PanikknappenV2-mappen först
+npx cap init panikknappen-v2 com.panikknappen.v2 --web-dir=panik-overlay
+npx cap add android
+```
+
+Resultat: du får en Android-projektmapp där vi kan aktivera mobilbehörigheter.
+
+### Steg 2: Aktivera overlay + bakgrundsservice i Android
+Mål: kunna visa knapp över andra appar och hålla larmkedjan aktiv i bakgrunden.
+
+Gör i **Android Studio (Android-utvecklingsverktyg)**:
+1. Öppna mappen `android/`.
+2. Lägg till behörighet för overlay (visa över andra appar) i `AndroidManifest.xml`.
+3. Lägg till foreground service (bakgrundstjänst med synlig notis) för stabil övervakning.
+
+Kodrad att lägga i `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+```
+
+### Steg 3: Koppla nuvarande panikflöde till native-signaler
+Mål: behålla din panikknapp + familjeflöde men med riktig mobilnivå.
+
+I appen:
+1. Knapptryck -> skicka incident till samma API (`POST /api/incidents`).
+2. Skicka push (mobilnotis) till familjeenhet.
+3. Lägg till riktig screenshot (skärmbild) + plats (GPS-position) via native-plugin.
+
+Snabb check i **repo-roten** efter webbuppdatering:
+
+```bash
+# Alla plattformar
+cd panik-overlay
+npm run check
+```
+
+Synka sedan webbbygget till Android-projektet (kör från repo-roten):
+
+```bash
+# Alla plattformar
+npx cap copy android
+```
+
+### Viktig avgränsning
+- iOS (iPhone) tillåter inte samma fria overlay över andra appar som Android.
+- Rekommendation: börja med Android för overlay-kravet, och behåll iOS som PWA-spår (installerad webbapp) tills vidare.
+
+---
+
+## 3) Snabbstart lokalt (exakt steg-för-steg)
+
+Kör dessa kommandon i terminalen från repo-roten (projektmapp på GitHub):
+
+```bash
+# Alla plattformar
 cd panik-overlay
 npm run preview
 ```
@@ -115,7 +180,8 @@ Stoppa servern:
 Kör i `panik-overlay/`:
 
 ```bash
-cd /workspace/PanikknappenV2/panik-overlay
+# Alla plattformar
+cd panik-overlay
 npm run check
 ```
 
@@ -136,7 +202,8 @@ Tips för två ikoner på olika enheter:
 - Test med två telefoner: öppna barnlänken i barnets telefon och familjelänken i förälderns telefon. Trigga sedan barnknappen och kontrollera incident i familjeläget.
 - Lokal körning i repo-roten (för API + app tillsammans):
 ```bash
-cd /workspace/PanikknappenV2/panik-overlay
+# Alla plattformar
+cd panik-overlay
 npm run preview
 ```
 - Aktivera push i förälderns app: öppna `.../apps/family/` och tryck **Aktivera push-notiser**.
@@ -217,17 +284,15 @@ Om du kör i Codex/container (isolerad körmiljö) där browser inte kan öppnas
 
 ### 4.1.1 Snabbdeploy med hjälpscript (rekommenderad)
 
-Kör i **repo-roten** (`/workspace/PanikknappenV2`):
+Kör i **repo-roten** (mappen där du klonat repo (projektmapp på GitHub)):
 
 ```bash
-cd /workspace/PanikknappenV2
 ./scripts/netlify-deploy.sh preview
 ```
 
 För produktion:
 
 ```bash
-cd /workspace/PanikknappenV2
 ./scripts/netlify-deploy.sh prod
 ```
 
@@ -243,7 +308,6 @@ Scriptet använder `npx netlify-cli` (engångskörning av CLI utan global instal
 Alternativ med CLI (terminalverktyg), från repo-roten:
 
 ```bash
-cd /workspace/PanikknappenV2
 netlify deploy --dir=panik-overlay
 ```
 
@@ -278,7 +342,7 @@ Det här repo:t har nu workflow (automatiskt körflöde) i `.github/workflows/gi
 Kör gärna lokal check först i repo-roten:
 
 ```bash
-cd /workspace/PanikknappenV2/panik-overlay
+cd panik-overlay
 npm run check
 ```
 
@@ -292,12 +356,10 @@ När deploy är klar blir länken normalt:
 3. Om du vill köra separat backend senare: sätt `API_BASE_URL` som miljövariabel i Netlify under **Site settings → Environment variables**.
 4. Kör deploy (publicera) med:
 ```bash
-cd /workspace/PanikknappenV2
 netlify deploy --dir=panik-overlay
 ```
 Produktion:
 ```bash
-cd /workspace/PanikknappenV2
 netlify deploy --prod --dir=panik-overlay
 ```
 
