@@ -77,6 +77,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Dokumentation fixad (2026-02-23): körplats är nu uttryckligen "repo-roten i Codex (webb)" så stegen inte kräver lokal GitHub-projektmapp.
 - Felsökning klar (2026-02-23): native-kommandon för Capacitor är nu förtydligade med installationssteg + fix för felet "Could not find the web assets directory".
 - Felsökning klar (2026-02-23): Capacitor ska initieras i `panik-overlay/` med `webDir` = `.`; detta löser felet där CLI letade efter `./panik-overlay` inne i fel mapp.
+- Felsökning klar (2026-02-23): git pull-felet med divergerande brancher är dokumenterat med tydliga kommandon (`--rebase` eller merge-strategi).
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -325,6 +326,39 @@ När deploy är klar blir länken normalt:
 1. **GitHub (webb):** pusha ändringar till branch och mergea till `main`.
 2. Verifiera att workflow i `.github/workflows/github-pages.yml` är aktivt.
 3. Om API flyttas till separat backend senare: sätt `API_BASE_URL` via build-konfiguration (bygginställning) i GitHub Actions eller i appens konfigurationsfil.
+
+
+### 4.4 Felsökning i Git (divergent branches vid `git pull`)
+Om du får felet:
+
+```
+fatal: Need to specify how to reconcile divergent branches.
+```
+
+Kör i **repo-roten i Codex (webb)**:
+
+```bash
+# Rekommenderad engångsinställning i detta repo (använder rebase = lägger dina commits ovanpå senaste main)
+git config pull.rebase true
+
+# Hämta sedan main igen
+git pull --tags origin main
+```
+
+Snabb-alternativ utan att ändra config (inställning):
+
+```bash
+git pull --rebase --tags origin main
+```
+
+Om du i stället vill använda merge (sammanfogning) som standard i detta repo:
+
+```bash
+git config pull.rebase false
+git pull --tags origin main
+```
+
+Tips: använd samma strategi varje gång i repo:t för att undvika onödiga konflikter (krockar i historik).
 
 ## 5) Verifiering/checklista efter deploy
 
