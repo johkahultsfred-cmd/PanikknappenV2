@@ -262,27 +262,25 @@ Repo:t har nu en `netlify.toml` (Netlify konfigurationsfil) i repo-roten som pek
 - `publish = "panik-overlay"` (mappen som ska publiceras)
 - redirect-regel för `/*` till `/index.html` (gör att sidan laddar rätt även om du öppnar en undersökväg).
 
-### 4.1 Förberedelser (en gång)
-1. Skapa konto på Netlify.
-2. Installera CLI globalt:
+1. Öppna repo:t i GitHub (webb).
+2. Klicka **Settings**.
+3. Klicka **Pages** i vänstermenyn.
+4. Under **Build and deployment** välj **Source: GitHub Actions**.
+
+### 4.2 Publicera (deploy)
+- Automatiskt: push till `main` triggar deploy.
+- Manuellt: **Actions** → **GitHub Pages Deploy** → **Run workflow**.
+
+Kör gärna lokal check först i **repo-roten i Codex (webb)**:
 
 ```bash
-npm install -g netlify-cli
+cd panik-overlay
+npm run check
 ```
 
-3. Logga in:
+När deploy är klar blir länken normalt:
+- `https://johkahultsfred-cmd.github.io/PanikknappenV2/`
 
-```bash
-netlify login
-```
-
-Om du kör i Codex/container (isolerad körmiljö) där browser inte kan öppnas automatiskt:
-
-1. Kopiera URL:en som Netlify CLI (terminalverktyg) visar.
-2. Öppna URL:en manuellt i din vanliga browser och godkänn login.
-3. Gå tillbaka till terminalen och kör deploy-kommandot igen.
-
-### 4.1.1 Snabbdeploy med hjälpscript (rekommenderad)
 
 Kör i **repo-roten** (mappen där du klonat repo (projektmapp på GitHub)):
 
@@ -290,7 +288,8 @@ Kör i **repo-roten** (mappen där du klonat repo (projektmapp på GitHub)):
 ./scripts/netlify-deploy.sh preview
 ```
 
-För produktion:
+### 4.4 Felsökning i Git (divergent branches vid `git pull`)
+Om du får felet:
 
 ```bash
 ./scripts/netlify-deploy.sh prod
@@ -311,29 +310,11 @@ Alternativ med CLI (terminalverktyg), från repo-roten:
 netlify deploy --dir=panik-overlay
 ```
 
-När du är nöjd, publicera till produktion:
+Kör i **repo-roten i Codex (webb)**:
 
 ```bash
-netlify deploy --prod --dir=panik-overlay
-```
-
-Netlify visar din live-länk i terminalen, t.ex.:
-- `https://din-site.netlify.app`
-
-> Tips: Spara länken direkt under sektion **6) Live-länk**.
-
----
-
-
-## 4.3 Deploy via GitHub Pages (helt gratis, primärt spår nu)
-
-Det här repo:t har nu workflow (automatiskt körflöde) i `.github/workflows/github-pages.yml` som publicerar mappen `panik-overlay` till GitHub Pages.
-
-### 4.3.1 Engångsinställning i GitHub (webb)
-1. Öppna repo:t i GitHub (webb).
-2. Klicka **Settings**.
-3. Klicka **Pages** i vänstermenyn.
-4. Under **Build and deployment** välj **Source: GitHub Actions**.
+# Rekommenderad engångsinställning i detta repo (använder rebase = lägger dina commits ovanpå senaste main)
+git config pull.rebase true
 
 ### 4.3.2 Publicera (deploy)
 - Automatiskt: push till `main` triggar deploy.
@@ -346,9 +327,7 @@ cd panik-overlay
 npm run check
 ```
 
-När deploy är klar blir länken normalt:
-- `https://johkahultsfred-cmd.github.io/PanikknappenV2/`
-
+Om du i stället vill använda merge (sammanfogning) som standard i detta repo:
 
 ### 4.4 Krav i GitHub/Netlify för live API + app
 1. **GitHub (webb):** pusha ändringar till branch och mergea till `main`.
@@ -362,6 +341,8 @@ Produktion:
 ```bash
 netlify deploy --prod --dir=panik-overlay
 ```
+
+Tips: använd samma strategi varje gång i repo:t för att undvika onödiga konflikter (krockar i historik).
 
 ## 5) Verifiering/checklista efter deploy
 
