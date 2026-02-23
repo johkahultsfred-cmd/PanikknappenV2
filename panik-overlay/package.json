@@ -9,7 +9,10 @@
     "api": "node server/api-server.js"
   },
   "dependencies": {
+    "@capacitor/android": "^8.1.0",
+    "@capacitor/cli": "^8.1.0",
+    "@capacitor/core": "^8.1.0",
     "gsap": "^3.14.2",
-    "web-push": "^3.6.7"
+    "web-push": "^1.0.2"
   }
 }
