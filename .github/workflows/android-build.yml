@@ -9,6 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: panik-overlay
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -19,14 +23,10 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: |
-          cd panik-overlay
-          npm install
+        run: npm install
 
       - name: Sync Capacitor
-        run: |
-          cd panik-overlay
-          npx cap sync android
+        run: npx cap sync android
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -36,7 +36,7 @@ jobs:
 
       - name: Build APK
         run: |
-          cd panik-overlay/android
+          cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
