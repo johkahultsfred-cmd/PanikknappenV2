@@ -14,7 +14,7 @@ Den här guiden är för dig som vill deploya (publicera till webben) med minsta
 
 ## 1) Preview deploy (testlänk)
 
-Kör i **repo-roten i Codex (webb)**:
+Kör i **repo-roten** (projektmapp på GitHub):
 
 ```bash
 ./scripts/netlify-deploy.sh preview
@@ -22,7 +22,7 @@ Kör i **repo-roten i Codex (webb)**:
 
 ## 2) Produktionsdeploy (live-länk)
 
-Kör i **repo-roten i Codex (webb)**:
+Kör i **repo-roten** (projektmapp på GitHub):
 
 ```bash
 ./scripts/netlify-deploy.sh prod
@@ -31,7 +31,7 @@ Kör i **repo-roten i Codex (webb)**:
 
 ## 2.1) Alternativ: deploy via Build hook (enkelt i CI utan token)
 
-Kör i **repo-roten i Codex (webb)**:
+Kör i **repo-roten** (projektmapp på GitHub):
 
 ```bash
 export NETLIFY_DEPLOY_HOOK_URL='<din-build-hook-url>'

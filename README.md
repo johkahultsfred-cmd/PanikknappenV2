@@ -72,9 +72,6 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Plan klar (2026-02-23): native-spår (riktig mobilapp) är beskrivet steg-för-steg för overlay över andra appar, bakgrundsspårning och säker larmkedja.
 - Dokumentation fixad (2026-02-23): kommandon är nu relative (relativa sökvägar), så samma copy/paste fungerar i macOS/Linux och Windows PowerShell utan `/workspace/...`.
 - Dokumentation fixad (2026-02-23): alla kvarvarande `/workspace/...`-rader i README + NETLIFY_DEPLOY är borttagna för att undvika Windows-felet `Set-Location: Cannot find path`.
-- Strategi låst (2026-02-23): deploy (publicering) körs nu enbart via GitHub Pages (GitHub-hosting); Netlify-spår är avstängt i standardguiden.
-- Verifiering klar (2026-02-23): live-länken via GitHub Pages svarar 200 OK för portal, barnläge och familjeläge.
-- Dokumentation fixad (2026-02-23): körplats är nu uttryckligen "repo-roten i Codex (webb)" så stegen inte kräver lokal GitHub-projektmapp.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -107,7 +104,7 @@ Detta spår behövs om målet är en knapp som kan ligga över andra appar/spel 
 ### Steg 1: Android wrapper (mobilskal) runt nuvarande app
 Mål: återanvänd nuvarande UI (gränssnitt) men köra som native-app (riktig mobilapp).
 
-Kör i **repo-roten i Codex (webb)**:
+Kör i **repo-roten** (projektmapp på GitHub):
 
 ```bash
 # Alla plattformar (macOS/Linux/Windows PowerShell)
@@ -148,7 +145,7 @@ cd panik-overlay
 npm run check
 ```
 
-Synka sedan webbbygget till Android-projektet (kör från repo-roten i Codex (webb)):
+Synka sedan webbbygget till Android-projektet (kör från repo-roten):
 
 ```bash
 # Alla plattformar
@@ -163,9 +160,7 @@ npx cap copy android
 
 ## 3) Snabbstart lokalt (exakt steg-för-steg)
 
-> Kör du bara i Codex (webb)? Då är "repo-roten" den mapp som redan är öppen i Codex-terminalen (här: `PanikknappenV2`).
-
-Kör dessa kommandon i terminalen från **repo-roten i Codex (webb)**:
+Kör dessa kommandon i terminalen från repo-roten (projektmapp på GitHub):
 
 ```bash
 # Alla plattformar
@@ -265,6 +260,74 @@ Det här repo:t har workflow (automatiskt körflöde) i `.github/workflows/githu
 
 ### 4.1 Engångsinställning i GitHub (webb)
 
+### 4.1 Förberedelser (en gång)
+1. Skapa konto på Netlify.
+2. Installera CLI globalt:
+
+```bash
+npm install -g netlify-cli
+```
+
+3. Logga in:
+
+```bash
+netlify login
+```
+
+Om du kör i Codex/container (isolerad körmiljö) där browser inte kan öppnas automatiskt:
+
+1. Kopiera URL:en som Netlify CLI (terminalverktyg) visar.
+2. Öppna URL:en manuellt i din vanliga browser och godkänn login.
+3. Gå tillbaka till terminalen och kör deploy-kommandot igen.
+
+### 4.1.1 Snabbdeploy med hjälpscript (rekommenderad)
+
+Kör i **repo-roten** (mappen där du klonat repo (projektmapp på GitHub)):
+
+```bash
+./scripts/netlify-deploy.sh preview
+```
+
+För produktion:
+
+```bash
+./scripts/netlify-deploy.sh prod
+```
+
+Scriptet använder `npx netlify-cli` (engångskörning av CLI utan global installation) och publicerar alltid från `panik-overlay`.
+
+### 4.2 Deploy via Netlify UI (webbläsare)
+
+1. Gå till Netlify (webb) och öppna din site.
+2. Klicka **Deploys**.
+3. Klicka **Trigger deploy** → **Deploy site** för ny build (ny publicering).
+4. Om repo-koppling saknas: **Add new site** → **Import an existing project** och välj GitHub-repot.
+
+Alternativ med CLI (terminalverktyg), från repo-roten:
+
+```bash
+netlify deploy --dir=panik-overlay
+```
+
+När du är nöjd, publicera till produktion:
+
+```bash
+netlify deploy --prod --dir=panik-overlay
+```
+
+Netlify visar din live-länk i terminalen, t.ex.:
+- `https://din-site.netlify.app`
+
+> Tips: Spara länken direkt under sektion **6) Live-länk**.
+
+---
+
+
+## 4.3 Deploy via GitHub Pages (helt gratis, primärt spår nu)
+
+Det här repo:t har nu workflow (automatiskt körflöde) i `.github/workflows/github-pages.yml` som publicerar mappen `panik-overlay` till GitHub Pages.
+
+### 4.3.1 Engångsinställning i GitHub (webb)
 1. Öppna repo:t i GitHub (webb).
 2. Klicka **Settings**.
 3. Klicka **Pages** i vänstermenyn.
@@ -287,8 +350,16 @@ När deploy är klar blir länken normalt:
 
 ### 4.3 Krav i GitHub för live app
 1. **GitHub (webb):** pusha ändringar till branch och mergea till `main`.
-2. Verifiera att workflow i `.github/workflows/github-pages.yml` är aktivt.
-3. Om API flyttas till separat backend senare: sätt `API_BASE_URL` via build-konfiguration (bygginställning) i GitHub Actions eller i appens konfigurationsfil.
+2. **Netlify (webb):** Site settings → Build & deploy → Publish directory = `panik-overlay`.
+3. Om du vill köra separat backend senare: sätt `API_BASE_URL` som miljövariabel i Netlify under **Site settings → Environment variables**.
+4. Kör deploy (publicera) med:
+```bash
+netlify deploy --dir=panik-overlay
+```
+Produktion:
+```bash
+netlify deploy --prod --dir=panik-overlay
+```
 
 ## 5) Verifiering/checklista efter deploy
 
