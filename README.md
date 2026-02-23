@@ -79,7 +79,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
 
 ### Pågående aktivitet (nu)
-- Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
+- Bekräfta funktion i live-länk efter nästa kodändring (snabb kontroll av portal + barn + familj).
 - Planera när föräldrakod ska slås på igen efter att åtkomstflödet är stabilt.
 - Bryta ut native-MVP (första fungerande mobilversion) med overlay-behörighet i Android och samma API-flöde som webbappen.
 
@@ -90,7 +90,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Återaktivera kodlåset i familjeläget när inloggningsflödet fungerar stabilt för testgruppen.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
-- Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att CLI-login är klart eller `NETLIFY_AUTH_TOKEN` + `NETLIFY_SITE_ID` är satta i miljön.
+- Slutföra produktionsdeploy via GitHub Pages (GitHub-hosting) och verifiera att live-länken fungerar för både portal, barnläge och familjeläge.
 - Flytta föräldrakod till servervalidering för att undvika att kod ligger synligt i klientkod.
 - Bygg riktig push-notis (mobilnotis) + backend-lagring så familjen får signal även på annan enhet än samma browser-data.
 - För notiser mellan olika telefoner behövs backend + push-tjänst (server + push), lokal demo visar idag flödet i browsern och är nästa steg att koppla till riktig server.
@@ -252,15 +252,13 @@ npm run preview
 }
 ```
 
-## 4) Netlify Deploy – pausad under GitHub Pages-provet
+## 4) Deploy via GitHub Pages (helt gratis, primärt spår)
 
-Mål: få en **publik URL** för preview/test.
+Mål: få en **publik URL** för preview/test via GitHub (webb).
 
-Vill du ha en kort variant? Öppna `NETLIFY_DEPLOY.md` (snabbguide med copy/paste-kommandon).
+Det här repo:t har workflow (automatiskt körflöde) i `.github/workflows/github-pages.yml` som publicerar mappen `panik-overlay` till GitHub Pages.
 
-Repo:t har nu en `netlify.toml` (Netlify konfigurationsfil) i repo-roten som pekar ut:
-- `publish = "panik-overlay"` (mappen som ska publiceras)
-- redirect-regel för `/*` till `/index.html` (gör att sidan laddar rätt även om du öppnar en undersökväg).
+### 4.1 Engångsinställning i GitHub (webb)
 
 ### 4.1 Förberedelser (en gång)
 1. Skapa konto på Netlify.
@@ -335,11 +333,11 @@ Det här repo:t har nu workflow (automatiskt körflöde) i `.github/workflows/gi
 3. Klicka **Pages** i vänstermenyn.
 4. Under **Build and deployment** välj **Source: GitHub Actions**.
 
-### 4.3.2 Publicera (deploy)
+### 4.2 Publicera (deploy)
 - Automatiskt: push till `main` triggar deploy.
 - Manuellt: **Actions** → **GitHub Pages Deploy** → **Run workflow**.
 
-Kör gärna lokal check först i repo-roten:
+Kör gärna lokal check först i **repo-roten i Codex (webb)**:
 
 ```bash
 cd panik-overlay
@@ -350,7 +348,7 @@ När deploy är klar blir länken normalt:
 - `https://johkahultsfred-cmd.github.io/PanikknappenV2/`
 
 
-### 4.4 Krav i GitHub/Netlify för live API + app
+### 4.3 Krav i GitHub för live app
 1. **GitHub (webb):** pusha ändringar till branch och mergea till `main`.
 2. **Netlify (webb):** Site settings → Build & deploy → Publish directory = `panik-overlay`.
 3. Om du vill köra separat backend senare: sätt `API_BASE_URL` som miljövariabel i Netlify under **Site settings → Environment variables**.
@@ -377,8 +375,8 @@ Efter deploy ska du alltid kontrollera:
 
 ## 6) Live-länk (fyll i efter deploy)
 
-- Production/Preview URL: `https://deploy-preview-4--beautiful-creponne-1506ee.netlify.app`
-- Senast verifierad: `2026-02-17`
+- Production URL (GitHub Pages): `https://johkahultsfred-cmd.github.io/PanikknappenV2/`
+- Senast verifierad: `2026-02-23`
 - Verifierad av: `Användare + AI-agent`
 
 ---
@@ -387,7 +385,7 @@ Efter deploy ska du alltid kontrollera:
 
 När du vill fortsätta, skriv t.ex.:
 
-- "Deploya senaste versionen till Netlify och ge mig länken."
+- "Deploya senaste versionen via GitHub Pages och ge mig länken."
 - "Gör UI snyggare men behåll enkelheten."
 - "Lägg till 10-sekunders nedräkning före panik triggas."
 - "Skapa en checklista jag kan följa innan release."
@@ -427,11 +425,11 @@ För att göra allt ännu mer noob-vänligt gäller följande när AI-agenten hj
 2. Instruktioner ska anpassas efter var du jobbar:
    - **Codex (webb):** AI ska skriva exakt vad du gör i chatten/webbgränssnittet.
    - **GitHub (webb):** AI ska nämna rätt flikar/knappar i GitHub-webben.
-   - **Netlify (webb):** AI ska ge tydliga UI-steg för deploy/publicering.
+   - **GitHub Pages (webb):** AI ska ge tydliga UI-steg för deploy/publicering.
 
 3. Om ett terminalkommando behövs ska AI alltid skriva:
    - exakt copy/paste-kommando,
-   - var det körs (repo-rot, undermapp, eller i Netlify/GitHub UI).
+   - var det körs (repo-rot, undermapp, eller i GitHub UI).
 
 ---
 
