@@ -72,13 +72,6 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Plan klar (2026-02-23): native-spår (riktig mobilapp) är beskrivet steg-för-steg för overlay över andra appar, bakgrundsspårning och säker larmkedja.
 - Dokumentation fixad (2026-02-23): kommandon är nu relative (relativa sökvägar), så samma copy/paste fungerar i macOS/Linux och Windows PowerShell utan `/workspace/...`.
 - Dokumentation fixad (2026-02-23): alla kvarvarande `/workspace/...`-rader i README + NETLIFY_DEPLOY är borttagna för att undvika Windows-felet `Set-Location: Cannot find path`.
-- Strategi låst (2026-02-23): deploy (publicering) körs nu enbart via GitHub Pages (GitHub-hosting); Netlify-spår är avstängt i standardguiden.
-- Verifiering klar (2026-02-23): live-länken via GitHub Pages svarar 200 OK för portal, barnläge och familjeläge.
-- Dokumentation fixad (2026-02-23): körplats är nu uttryckligen "repo-roten i Codex (webb)" så stegen inte kräver lokal GitHub-projektmapp.
-- Felsökning klar (2026-02-23): native-kommandon för Capacitor är nu förtydligade med installationssteg + fix för felet "Could not find the web assets directory".
-- Felsökning klar (2026-02-23): Capacitor ska initieras i `panik-overlay/` med `webDir` = `.`; detta löser felet där CLI letade efter `./panik-overlay` inne i fel mapp.
-- Felsökning klar (2026-02-23): git pull-felet med divergerande brancher är dokumenterat med tydliga kommandon (`--rebase` eller merge-strategi).
-- Verifiering klar (2026-02-23): `git pull --tags origin main` visar nu `Already up to date` i Codex (webb), så pull-blockeraren är löst för nuvarande branch.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -86,7 +79,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
 
 ### Pågående aktivitet (nu)
-- Fortsätt med nästa kodändring och kör sedan snabb live-kontroll av portal + barn + familj.
+- Bekräfta funktion i live-länk efter nästa kodändring (snabb kontroll av portal + barn + familj).
 - Planera när föräldrakod ska slås på igen efter att åtkomstflödet är stabilt.
 - Bryta ut native-MVP (första fungerande mobilversion) med overlay-behörighet i Android och samma API-flöde som webbappen.
 
@@ -111,19 +104,12 @@ Detta spår behövs om målet är en knapp som kan ligga över andra appar/spel 
 ### Steg 1: Android wrapper (mobilskal) runt nuvarande app
 Mål: återanvänd nuvarande UI (gränssnitt) men köra som native-app (riktig mobilapp).
 
-Kör i **`panik-overlay/`** i Codex (webb):
+Kör i **repo-roten** (projektmapp på GitHub):
 
 ```bash
-cd panik-overlay
-
-# 1) Installera Capacitor (native-wrapper)
-npm install -D @capacitor/cli
-npm install @capacitor/core @capacitor/android
-
-# 2) Initiera projektet (viktigt: webDir = . när du står i panik-overlay)
-npx cap init panikknappen-v2 com.panikknappen.v2 --web-dir=.
-
-# 3) Lägg till Android-projekt (om det inte redan finns)
+# Alla plattformar (macOS/Linux/Windows PowerShell)
+# Tips: öppna terminalen direkt i PanikknappenV2-mappen först
+npx cap init panikknappen-v2 com.panikknappen.v2 --web-dir=panik-overlay
 npx cap add android
 ```
 
@@ -159,39 +145,12 @@ cd panik-overlay
 npm run check
 ```
 
-Synka sedan webbbygget till Android-projektet (kör i **`panik-overlay/`**):
+Synka sedan webbbygget till Android-projektet (kör från repo-roten):
 
 ```bash
-cd panik-overlay
+# Alla plattformar
 npx cap copy android
-# eller synka allt i ett steg
-npx cap sync android
 ```
-
-### 3.4.1 Felsökning: `Could not find the web assets directory`
-Det felet betyder nästan alltid att `webDir` (mapp med webbfiler) är fel i `capacitor.config.json` **för mappen du står i**.
-
-Kör i **`panik-overlay/`**:
-
-```bash
-cd panik-overlay
-ls index.html
-```
-
-Öppna sedan `capacitor.config.json` (inne i `panik-overlay/`) och kontrollera att den här raden finns:
-
-```json
-"webDir": "."
-```
-
-Om du får `android platform already exists` betyder det att Android redan är tillagd. Kör då **inte** `npx cap add android` igen, utan fortsätt med:
-
-```bash
-cd panik-overlay
-npx cap sync android
-```
-
-Om du råkat klistra in flera kommandon i samma rad (t.ex. `@capacitor/androidnpx`), kör om kommandona rad för rad.
 
 ### Viktig avgränsning
 - iOS (iPhone) tillåter inte samma fria overlay över andra appar som Android.
@@ -201,9 +160,7 @@ Om du råkat klistra in flera kommandon i samma rad (t.ex. `@capacitor/androidnp
 
 ## 3) Snabbstart lokalt (exakt steg-för-steg)
 
-> Kör du bara i Codex (webb)? Då är "repo-roten" den mapp som redan är öppen i Codex-terminalen (här: `PanikknappenV2`).
-
-Kör dessa kommandon i terminalen från **repo-roten i Codex (webb)**:
+Kör dessa kommandon i terminalen från repo-roten (projektmapp på GitHub):
 
 ```bash
 # Alla plattformar
@@ -323,17 +280,32 @@ När deploy är klar blir länken normalt:
 - `https://johkahultsfred-cmd.github.io/PanikknappenV2/`
 
 
-### 4.3 Krav i GitHub för live app
-1. **GitHub (webb):** pusha ändringar till branch och mergea till `main`.
-2. Verifiera att workflow i `.github/workflows/github-pages.yml` är aktivt.
-3. Om API flyttas till separat backend senare: sätt `API_BASE_URL` via build-konfiguration (bygginställning) i GitHub Actions eller i appens konfigurationsfil.
+Kör i **repo-roten** (mappen där du klonat repo (projektmapp på GitHub)):
 
+```bash
+./scripts/netlify-deploy.sh preview
+```
 
 ### 4.4 Felsökning i Git (divergent branches vid `git pull`)
 Om du får felet:
 
+```bash
+./scripts/netlify-deploy.sh prod
 ```
-fatal: Need to specify how to reconcile divergent branches.
+
+Scriptet använder `npx netlify-cli` (engångskörning av CLI utan global installation) och publicerar alltid från `panik-overlay`.
+
+### 4.2 Deploy via Netlify UI (webbläsare)
+
+1. Gå till Netlify (webb) och öppna din site.
+2. Klicka **Deploys**.
+3. Klicka **Trigger deploy** → **Deploy site** för ny build (ny publicering).
+4. Om repo-koppling saknas: **Add new site** → **Import an existing project** och välj GitHub-repot.
+
+Alternativ med CLI (terminalverktyg), från repo-roten:
+
+```bash
+netlify deploy --dir=panik-overlay
 ```
 
 Kör i **repo-roten i Codex (webb)**:
@@ -342,21 +314,30 @@ Kör i **repo-roten i Codex (webb)**:
 # Rekommenderad engångsinställning i detta repo (använder rebase = lägger dina commits ovanpå senaste main)
 git config pull.rebase true
 
-# Hämta sedan main igen
-git pull --tags origin main
-```
+### 4.2 Publicera (deploy)
+- Automatiskt: push till `main` triggar deploy.
+- Manuellt: **Actions** → **GitHub Pages Deploy** → **Run workflow**.
 
-Snabb-alternativ utan att ändra config (inställning):
+Kör gärna lokal check först i **repo-roten i Codex (webb)**:
 
 ```bash
-git pull --rebase --tags origin main
+cd panik-overlay
+npm run check
 ```
 
 Om du i stället vill använda merge (sammanfogning) som standard i detta repo:
 
+### 4.3 Krav i GitHub för live app
+1. **GitHub (webb):** pusha ändringar till branch och mergea till `main`.
+2. **Netlify (webb):** Site settings → Build & deploy → Publish directory = `panik-overlay`.
+3. Om du vill köra separat backend senare: sätt `API_BASE_URL` som miljövariabel i Netlify under **Site settings → Environment variables**.
+4. Kör deploy (publicera) med:
 ```bash
-git config pull.rebase false
-git pull --tags origin main
+netlify deploy --dir=panik-overlay
+```
+Produktion:
+```bash
+netlify deploy --prod --dir=panik-overlay
 ```
 
 Tips: använd samma strategi varje gång i repo:t för att undvika onödiga konflikter (krockar i historik).
