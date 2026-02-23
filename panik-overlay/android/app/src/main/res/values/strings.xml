@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">panikknappen-v2</string>
+    <string name="title_activity_main">panikknappen-v2</string>
+    <string name="package_name">com.github.johkahultsfred.panikknappenv2</string>
+    <string name="custom_url_scheme">com.github.johkahultsfred.panikknappenv2</string>
+</resources>
