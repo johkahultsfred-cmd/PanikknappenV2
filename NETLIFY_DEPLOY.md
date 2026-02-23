@@ -1,4 +1,9 @@
-# Netlify deploy-guide (snabb version)
+# Netlify deploy-guide (arkiverad fallback)
+
+> **Viktigt:** Vi kör inte Netlify i normalflödet längre.
+>
+> - Aktivt spår: GitHub Pages (GitHub-hosting).
+> - Den här filen är endast reservspår (fallback) om du uttryckligen vill köra Netlify manuellt.
 
 > **Tillfälligt undantag:** Netlify-spåret är pausat under GitHub Pages-provet.
 >
@@ -9,29 +14,26 @@ Den här guiden är för dig som vill deploya (publicera till webben) med minsta
 
 ## 1) Preview deploy (testlänk)
 
-Kör i **repo-roten** (`/workspace/PanikknappenV2`):
+Kör i **repo-roten i Codex (webb)**:
 
 ```bash
-cd /workspace/PanikknappenV2
 ./scripts/netlify-deploy.sh preview
 ```
 
 ## 2) Produktionsdeploy (live-länk)
 
-Kör i **repo-roten** (`/workspace/PanikknappenV2`):
+Kör i **repo-roten i Codex (webb)**:
 
 ```bash
-cd /workspace/PanikknappenV2
 ./scripts/netlify-deploy.sh prod
 ```
 
 
 ## 2.1) Alternativ: deploy via Build hook (enkelt i CI utan token)
 
-Kör i **repo-roten** (`/workspace/PanikknappenV2`):
+Kör i **repo-roten i Codex (webb)**:
 
 ```bash
-cd /workspace/PanikknappenV2
 export NETLIFY_DEPLOY_HOOK_URL='<din-build-hook-url>'
 ./scripts/netlify-deploy.sh hook
 # eller skicka URL direkt:
@@ -43,7 +45,7 @@ Skapa hook i Netlify UI (webb): **Site configuration** → **Build & deploy** �
 ### 2.1.1) Om du får `404 Not Found` på hook
 1. Verifiera att hooken finns kvar i Netlify (webb): **Site configuration** → **Build & deploy** → **Build hooks**.
 2. Skapa en ny hook och kopiera URL:en igen.
-3. Kör från repo-roten: `./scripts/netlify-deploy.sh hook "<ny-build-hook-url>"`.
+3. Kör från repo-roten i Codex (webb): `./scripts/netlify-deploy.sh hook "<ny-build-hook-url>"`.
 
 ### 2.1.2) Om hook-URL är i fel format
 Scriptet accepterar bara Netlify-hookar i format:
@@ -68,10 +70,9 @@ Om Netlify CLI (terminalverktyg) ber om login (inloggning) och inte kan öppna b
 ### A) Rekommenderat i CI/container: token (engångsnyckel)
 1. Gå till Netlify webb: **User settings** → **Applications** → **Personal access tokens**.
 2. Skapa en token och kopiera den.
-3. Kör i **repo-roten**:
+3. Kör i **repo-roten i Codex (webb)**:
 
 ```bash
-cd /workspace/PanikknappenV2
 export NETLIFY_AUTH_TOKEN='<din-token>'
 # krävs i CI/container (non-interactive):
 # valfritt men rekommenderat i CI/container:
@@ -82,7 +83,6 @@ export NETLIFY_SITE_ID='<din-site-id>'
 För produktion:
 
 ```bash
-cd /workspace/PanikknappenV2
 export NETLIFY_AUTH_TOKEN='<din-token>'
 # krävs i CI/container (non-interactive):
 # valfritt men rekommenderat i CI/container:

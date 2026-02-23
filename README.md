@@ -69,6 +69,16 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Ändring klar (2026-02-18): familjeläget visar nu riktig larminkorg från barnappen (lokal incidentlogg) med tidsstämpel, status och skärmbild (SVG-bild från knappen) samt knapp för att markera larm som hanterat.
 - MVP klar (2026-02-18): lokal Node-backend (`panik-overlay/server/api-server.js`) med API-endpoints för incidenter är tillagd och barn/familj använder API med fallback till localStorage.
 - Nyhet klar (2026-02-18): riktig Web Push-grund är inkopplad med VAPID-nycklar, server-endpoints för subscription och push-notis till familjeläge när barnincident skapas.
+- Plan klar (2026-02-23): native-spår (riktig mobilapp) är beskrivet steg-för-steg för overlay över andra appar, bakgrundsspårning och säker larmkedja.
+- Dokumentation fixad (2026-02-23): kommandon är nu relative (relativa sökvägar), så samma copy/paste fungerar i macOS/Linux och Windows PowerShell utan `/workspace/...`.
+- Dokumentation fixad (2026-02-23): alla kvarvarande `/workspace/...`-rader i README + NETLIFY_DEPLOY är borttagna för att undvika Windows-felet `Set-Location: Cannot find path`.
+- Strategi låst (2026-02-23): deploy (publicering) körs nu enbart via GitHub Pages (GitHub-hosting); Netlify-spår är avstängt i standardguiden.
+- Verifiering klar (2026-02-23): live-länken via GitHub Pages svarar 200 OK för portal, barnläge och familjeläge.
+- Dokumentation fixad (2026-02-23): körplats är nu uttryckligen "repo-roten i Codex (webb)" så stegen inte kräver lokal GitHub-projektmapp.
+- Felsökning klar (2026-02-23): native-kommandon för Capacitor är nu förtydligade med installationssteg + fix för felet "Could not find the web assets directory".
+- Felsökning klar (2026-02-23): Capacitor ska initieras i `panik-overlay/` med `webDir` = `.`; detta löser felet där CLI letade efter `./panik-overlay` inne i fel mapp.
+- Felsökning klar (2026-02-23): git pull-felet med divergerande brancher är dokumenterat med tydliga kommandon (`--rebase` eller merge-strategi).
+- Verifiering klar (2026-02-23): `git pull --tags origin main` visar nu `Already up to date` i Codex (webb), så pull-blockeraren är löst för nuvarande branch.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -76,8 +86,9 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
 
 ### Pågående aktivitet (nu)
-- Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
+- Fortsätt med nästa kodändring och kör sedan snabb live-kontroll av portal + barn + familj.
 - Planera när föräldrakod ska slås på igen efter att åtkomstflödet är stabilt.
+- Bryta ut native-MVP (första fungerande mobilversion) med overlay-behörighet i Android och samma API-flöde som webbappen.
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
@@ -86,19 +97,116 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Återaktivera kodlåset i familjeläget när inloggningsflödet fungerar stabilt för testgruppen.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
-- Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att CLI-login är klart eller `NETLIFY_AUTH_TOKEN` + `NETLIFY_SITE_ID` är satta i miljön.
+- Slutföra produktionsdeploy via GitHub Pages (GitHub-hosting) och verifiera att live-länken fungerar för både portal, barnläge och familjeläge.
 - Flytta föräldrakod till servervalidering för att undvika att kod ligger synligt i klientkod.
 - Bygg riktig push-notis (mobilnotis) + backend-lagring så familjen får signal även på annan enhet än samma browser-data.
 - För notiser mellan olika telefoner behövs backend + push-tjänst (server + push), lokal demo visar idag flödet i browsern och är nästa steg att koppla till riktig server.
 
 ---
 
-## 3) Snabbstart lokalt (exakt steg-för-steg)
+## 3.4 Native-spår (riktig mobilapp) – enkel 3-stegsplan
 
-Kör dessa kommandon i terminalen från repo-roten (`/workspace/PanikknappenV2`):
+Detta spår behövs om målet är en knapp som kan ligga över andra appar/spel (system-overlay) på samma sätt som skärminspelningsappar.
+
+### Steg 1: Android wrapper (mobilskal) runt nuvarande app
+Mål: återanvänd nuvarande UI (gränssnitt) men köra som native-app (riktig mobilapp).
+
+Kör i **`panik-overlay/`** i Codex (webb):
 
 ```bash
-cd /workspace/PanikknappenV2
+cd panik-overlay
+
+# 1) Installera Capacitor (native-wrapper)
+npm install -D @capacitor/cli
+npm install @capacitor/core @capacitor/android
+
+# 2) Initiera projektet (viktigt: webDir = . när du står i panik-overlay)
+npx cap init panikknappen-v2 com.panikknappen.v2 --web-dir=.
+
+# 3) Lägg till Android-projekt (om det inte redan finns)
+npx cap add android
+```
+
+Resultat: du får en Android-projektmapp där vi kan aktivera mobilbehörigheter.
+
+### Steg 2: Aktivera overlay + bakgrundsservice i Android
+Mål: kunna visa knapp över andra appar och hålla larmkedjan aktiv i bakgrunden.
+
+Gör i **Android Studio (Android-utvecklingsverktyg)**:
+1. Öppna mappen `android/`.
+2. Lägg till behörighet för overlay (visa över andra appar) i `AndroidManifest.xml`.
+3. Lägg till foreground service (bakgrundstjänst med synlig notis) för stabil övervakning.
+
+Kodrad att lägga i `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+```
+
+### Steg 3: Koppla nuvarande panikflöde till native-signaler
+Mål: behålla din panikknapp + familjeflöde men med riktig mobilnivå.
+
+I appen:
+1. Knapptryck -> skicka incident till samma API (`POST /api/incidents`).
+2. Skicka push (mobilnotis) till familjeenhet.
+3. Lägg till riktig screenshot (skärmbild) + plats (GPS-position) via native-plugin.
+
+Snabb check i **repo-roten** efter webbuppdatering:
+
+```bash
+# Alla plattformar
+cd panik-overlay
+npm run check
+```
+
+Synka sedan webbbygget till Android-projektet (kör i **`panik-overlay/`**):
+
+```bash
+cd panik-overlay
+npx cap copy android
+# eller synka allt i ett steg
+npx cap sync android
+```
+
+### 3.4.1 Felsökning: `Could not find the web assets directory`
+Det felet betyder nästan alltid att `webDir` (mapp med webbfiler) är fel i `capacitor.config.json` **för mappen du står i**.
+
+Kör i **`panik-overlay/`**:
+
+```bash
+cd panik-overlay
+ls index.html
+```
+
+Öppna sedan `capacitor.config.json` (inne i `panik-overlay/`) och kontrollera att den här raden finns:
+
+```json
+"webDir": "."
+```
+
+Om du får `android platform already exists` betyder det att Android redan är tillagd. Kör då **inte** `npx cap add android` igen, utan fortsätt med:
+
+```bash
+cd panik-overlay
+npx cap sync android
+```
+
+Om du råkat klistra in flera kommandon i samma rad (t.ex. `@capacitor/androidnpx`), kör om kommandona rad för rad.
+
+### Viktig avgränsning
+- iOS (iPhone) tillåter inte samma fria overlay över andra appar som Android.
+- Rekommendation: börja med Android för overlay-kravet, och behåll iOS som PWA-spår (installerad webbapp) tills vidare.
+
+---
+
+## 3) Snabbstart lokalt (exakt steg-för-steg)
+
+> Kör du bara i Codex (webb)? Då är "repo-roten" den mapp som redan är öppen i Codex-terminalen (här: `PanikknappenV2`).
+
+Kör dessa kommandon i terminalen från **repo-roten i Codex (webb)**:
+
+```bash
+# Alla plattformar
 cd panik-overlay
 npm run preview
 ```
@@ -115,7 +223,8 @@ Stoppa servern:
 Kör i `panik-overlay/`:
 
 ```bash
-cd /workspace/PanikknappenV2/panik-overlay
+# Alla plattformar
+cd panik-overlay
 npm run check
 ```
 
@@ -136,7 +245,8 @@ Tips för två ikoner på olika enheter:
 - Test med två telefoner: öppna barnlänken i barnets telefon och familjelänken i förälderns telefon. Trigga sedan barnknappen och kontrollera incident i familjeläget.
 - Lokal körning i repo-roten (för API + app tillsammans):
 ```bash
-cd /workspace/PanikknappenV2/panik-overlay
+# Alla plattformar
+cd panik-overlay
 npm run preview
 ```
 - Aktivera push i förälderns app: öppna `.../apps/family/` och tryck **Aktivera push-notiser**.
@@ -185,100 +295,27 @@ npm run preview
 }
 ```
 
-## 4) Netlify Deploy – pausad under GitHub Pages-provet
+## 4) Deploy via GitHub Pages (helt gratis, primärt spår)
 
-Mål: få en **publik URL** för preview/test.
+Mål: få en **publik URL** för preview/test via GitHub (webb).
 
-Vill du ha en kort variant? Öppna `NETLIFY_DEPLOY.md` (snabbguide med copy/paste-kommandon).
+Det här repo:t har workflow (automatiskt körflöde) i `.github/workflows/github-pages.yml` som publicerar mappen `panik-overlay` till GitHub Pages.
 
-Repo:t har nu en `netlify.toml` (Netlify konfigurationsfil) i repo-roten som pekar ut:
-- `publish = "panik-overlay"` (mappen som ska publiceras)
-- redirect-regel för `/*` till `/index.html` (gör att sidan laddar rätt även om du öppnar en undersökväg).
+### 4.1 Engångsinställning i GitHub (webb)
 
-### 4.1 Förberedelser (en gång)
-1. Skapa konto på Netlify.
-2. Installera CLI globalt:
-
-```bash
-npm install -g netlify-cli
-```
-
-3. Logga in:
-
-```bash
-netlify login
-```
-
-Om du kör i Codex/container (isolerad körmiljö) där browser inte kan öppnas automatiskt:
-
-1. Kopiera URL:en som Netlify CLI (terminalverktyg) visar.
-2. Öppna URL:en manuellt i din vanliga browser och godkänn login.
-3. Gå tillbaka till terminalen och kör deploy-kommandot igen.
-
-### 4.1.1 Snabbdeploy med hjälpscript (rekommenderad)
-
-Kör i **repo-roten** (`/workspace/PanikknappenV2`):
-
-```bash
-cd /workspace/PanikknappenV2
-./scripts/netlify-deploy.sh preview
-```
-
-För produktion:
-
-```bash
-cd /workspace/PanikknappenV2
-./scripts/netlify-deploy.sh prod
-```
-
-Scriptet använder `npx netlify-cli` (engångskörning av CLI utan global installation) och publicerar alltid från `panik-overlay`.
-
-### 4.2 Deploy via Netlify UI (webbläsare)
-
-1. Gå till Netlify (webb) och öppna din site.
-2. Klicka **Deploys**.
-3. Klicka **Trigger deploy** → **Deploy site** för ny build (ny publicering).
-4. Om repo-koppling saknas: **Add new site** → **Import an existing project** och välj GitHub-repot.
-
-Alternativ med CLI (terminalverktyg), från repo-roten:
-
-```bash
-cd /workspace/PanikknappenV2
-netlify deploy --dir=panik-overlay
-```
-
-När du är nöjd, publicera till produktion:
-
-```bash
-netlify deploy --prod --dir=panik-overlay
-```
-
-Netlify visar din live-länk i terminalen, t.ex.:
-- `https://din-site.netlify.app`
-
-> Tips: Spara länken direkt under sektion **6) Live-länk**.
-
----
-
-
-## 4.3 Deploy via GitHub Pages (helt gratis, primärt spår nu)
-
-Det här repo:t har nu workflow (automatiskt körflöde) i `.github/workflows/github-pages.yml` som publicerar mappen `panik-overlay` till GitHub Pages.
-
-### 4.3.1 Engångsinställning i GitHub (webb)
 1. Öppna repo:t i GitHub (webb).
 2. Klicka **Settings**.
 3. Klicka **Pages** i vänstermenyn.
 4. Under **Build and deployment** välj **Source: GitHub Actions**.
 
-### 4.3.2 Publicera (deploy)
+### 4.2 Publicera (deploy)
 - Automatiskt: push till `main` triggar deploy.
 - Manuellt: **Actions** → **GitHub Pages Deploy** → **Run workflow**.
 
-Kör gärna lokal check först i repo-roten:
+Kör gärna lokal check först i **repo-roten i Codex (webb)**:
 
 ```bash
-cd /workspace/PanikknappenV2/panik-overlay
+cd panik-overlay
 npm run check
 ```
 
@@ -286,20 +323,43 @@ När deploy är klar blir länken normalt:
 - `https://johkahultsfred-cmd.github.io/PanikknappenV2/`
 
 
-### 4.4 Krav i GitHub/Netlify för live API + app
+### 4.3 Krav i GitHub för live app
 1. **GitHub (webb):** pusha ändringar till branch och mergea till `main`.
-2. **Netlify (webb):** Site settings → Build & deploy → Publish directory = `panik-overlay`.
-3. Om du vill köra separat backend senare: sätt `API_BASE_URL` som miljövariabel i Netlify under **Site settings → Environment variables**.
-4. Kör deploy (publicera) med:
-```bash
-cd /workspace/PanikknappenV2
-netlify deploy --dir=panik-overlay
+2. Verifiera att workflow i `.github/workflows/github-pages.yml` är aktivt.
+3. Om API flyttas till separat backend senare: sätt `API_BASE_URL` via build-konfiguration (bygginställning) i GitHub Actions eller i appens konfigurationsfil.
+
+
+### 4.4 Felsökning i Git (divergent branches vid `git pull`)
+Om du får felet:
+
 ```
-Produktion:
-```bash
-cd /workspace/PanikknappenV2
-netlify deploy --prod --dir=panik-overlay
+fatal: Need to specify how to reconcile divergent branches.
 ```
+
+Kör i **repo-roten i Codex (webb)**:
+
+```bash
+# Rekommenderad engångsinställning i detta repo (använder rebase = lägger dina commits ovanpå senaste main)
+git config pull.rebase true
+
+# Hämta sedan main igen
+git pull --tags origin main
+```
+
+Snabb-alternativ utan att ändra config (inställning):
+
+```bash
+git pull --rebase --tags origin main
+```
+
+Om du i stället vill använda merge (sammanfogning) som standard i detta repo:
+
+```bash
+git config pull.rebase false
+git pull --tags origin main
+```
+
+Tips: använd samma strategi varje gång i repo:t för att undvika onödiga konflikter (krockar i historik).
 
 ## 5) Verifiering/checklista efter deploy
 
@@ -315,8 +375,8 @@ Efter deploy ska du alltid kontrollera:
 
 ## 6) Live-länk (fyll i efter deploy)
 
-- Production/Preview URL: `https://deploy-preview-4--beautiful-creponne-1506ee.netlify.app`
-- Senast verifierad: `2026-02-17`
+- Production URL (GitHub Pages): `https://johkahultsfred-cmd.github.io/PanikknappenV2/`
+- Senast verifierad: `2026-02-23`
 - Verifierad av: `Användare + AI-agent`
 
 ---
@@ -325,7 +385,7 @@ Efter deploy ska du alltid kontrollera:
 
 När du vill fortsätta, skriv t.ex.:
 
-- "Deploya senaste versionen till Netlify och ge mig länken."
+- "Deploya senaste versionen via GitHub Pages och ge mig länken."
 - "Gör UI snyggare men behåll enkelheten."
 - "Lägg till 10-sekunders nedräkning före panik triggas."
 - "Skapa en checklista jag kan följa innan release."
@@ -365,11 +425,11 @@ För att göra allt ännu mer noob-vänligt gäller följande när AI-agenten hj
 2. Instruktioner ska anpassas efter var du jobbar:
    - **Codex (webb):** AI ska skriva exakt vad du gör i chatten/webbgränssnittet.
    - **GitHub (webb):** AI ska nämna rätt flikar/knappar i GitHub-webben.
-   - **Netlify (webb):** AI ska ge tydliga UI-steg för deploy/publicering.
+   - **GitHub Pages (webb):** AI ska ge tydliga UI-steg för deploy/publicering.
 
 3. Om ett terminalkommando behövs ska AI alltid skriva:
    - exakt copy/paste-kommando,
-   - var det körs (repo-rot, undermapp, eller i Netlify/GitHub UI).
+   - var det körs (repo-rot, undermapp, eller i GitHub UI).
 
 ---
 
