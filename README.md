@@ -45,7 +45,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Ny to-do/funktionskarta är skapad i `to-do/readme.md` med uppdelning: klart, delvis klart, planerat och arkitekturstatus.
 - Portal, barnläge och familjeläge har fått ett nytt visuellt premiumlyft med responsiv layout, förbättrad typografi och tydligare CTA-kort.
 - GSAP (animationsbibliotek) är installerat och används lokalt via `assets/vendor/gsap.min.js` för mjuka mikroanimationer i barnläget.
-- Familjeläget har nu kodlås för föräldrafunktioner med initial testkod `1234`, lokal säkerhetslogg och automatisk låsning efter inaktivitet (5 minuter).
+- Familjeläget har lokal säkerhetslogg och föräldrakod-flödet ligger kvar i koden men är tillfälligt avstängt i UI tills stabil fix är klar.
 - Felsökning klar: `panik-overlay/package.json` hade dubbla `check`-nycklar (konfigurationsfält), nu ersatt med en enda check som verifierar både familjeläge-script och lås-script.
 - Felsökning klar: `scripts/netlify-deploy.sh` använder nu samma argumentkedja utan dubbletter och stödjer även `NETLIFY_SITE_ID` (site-id för direkt koppling i CI/container).
 - Förbättring klar: deploy-scriptet använder nu absolut publish-mapp, undviker `--auth`-flagga och stoppar tidigt med tydligt fel om site-id saknas i non-interactive miljö.
@@ -62,7 +62,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Förtydligat: Netlify-workflow körs nu endast manuellt (workflow_dispatch) så GitHub Pages förblir huvudspår utan automatisk Netlify-körning på `main`.
 - Uppföljning klar: PR-spåret är flyttat till branch `Variant_3` för vidare ändringar i ett eget, tydligt arbetsflöde.
 - Felsökning klar: barn- och familjesidan använder nu relativa filvägar (sökvägar utan inledande `/`) så CSS/JS/back-länkar fungerar även efter deploy på undersökväg (t.ex. GitHub Pages).
-- Felsökning klar (2026-02-18): föräldralåset i familjeläget respekterar nu `hidden`-attributet i CSS, så korrekt kod (`1234`) döljer låsskärmen och släpper fram dashboarden som tänkt.
+- Felsökning klar (2026-02-18): föräldralåset i familjeläget respekterar nu `hidden`-attributet i CSS när låsflödet används.
 - Ändring klar (2026-02-18): kodlåset i familjeläget är tillfälligt avstängt så sidan öppnas direkt utan kod medan vidare felsökning pågår.
 - Ändring klar (2026-02-18): barnläget skickar nu incidenter till gemensam larminkorg (lokal demo) och familjeläget visar dessa med status, tidsstämpel och demo-screenshot.
 - Justering klar (2026-02-18): tidigare `?simple=1`-spår är borttaget igen efter feedback.
@@ -74,16 +74,24 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Dokumentation fixad (2026-02-23): kommandon är nu relative (relativa sökvägar), så samma copy/paste fungerar i macOS/Linux och Windows PowerShell utan `/workspace/...`.
 - Dokumentation fixad (2026-02-23): alla kvarvarande `/workspace/...`-rader i README + NETLIFY_DEPLOY är borttagna för att undvika Windows-felet `Set-Location: Cannot find path`.
 - Felsökning klar (2026-02-23): Capacitor-kommandon är nu förtydligade till `panik-overlay/`, så `android platform has not been added yet` undviks när sync körs från rätt mapp.
+- Backendkoppling klar (2026-02-24): familjelägets snabbåtgärder sparas nu via API-endpoint (`POST /api/family-actions`) i stället för enbart simulerad lokal logg.
+- Stabilisering klar (2026-02-24): backend startar nu igen efter uppdatering av `web-push`, och snabbåtgärds-API (`POST/GET /api/family-actions`) är verifierat med lokal servertest.
+- CI-fix klar (2026-02-24): `.github/workflows/webpack.yml` kör nu i `panik-overlay/` med `npm ci` + `npm run check`, så GitHub Actions letar rätt `package.json` och undviker ENOENT-felet i repo-roten.
+- CI-fix klar (2026-02-24): Android-workflows använder nu Node 22 i GitHub Actions, så `npx cap sync android` uppfyller Capacitor-kravet (`>=22`) och slutar krascha.
+- Windows-fix klar (2026-02-24): snabbstarten använder nu relativa sökvägar och PowerShell-exempel med riktig lokal repo-mapp, så `cd workspace/PanikknappenV2`-felet undviks.
+- Tillfällig förenkling klar (2026-02-24): hårdkodad testkod är borttagen och föräldrakod är avstängd tills låsflödet är stabilt igen.
+- Cache-fix klar (2026-02-24): service worker-cache är uppdaterad till ny version så gamla låsade filer inte ligger kvar i PWA-läge.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
-2. Koppla familjeappens snabbåtgärder till riktig backend/API i stället för simulerad logg.
-3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
+2. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
+3. Visa backend-logg för snabbåtgärder i egen vy i familjeläget.
 
 ### Pågående aktivitet (nu)
 - Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
-- Planera när föräldrakod ska slås på igen efter att åtkomstflödet är stabilt.
+- Planera ny, stabil återaktivering av föräldrakod (utan hårdkodad testkod) efter verifierat låsflöde.
 - Bryta ut native-MVP (första fungerande mobilversion) med overlay-behörighet i Android och samma API-flöde som webbappen.
+- Visa historik för snabbåtgärder från backend i familjelägets UI (gränssnitt).
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
@@ -177,20 +185,26 @@ Om du sitter i Codex/container (isolierad Linux-miljö) men dina filer finns i W
 Kör i terminalen:
 
 ```bash
-# Kör i valfri mapp (kommandot använder fulla sökvägar)
-cp -r /mnt/c/DIN/MAPP/* /workspace/PanikknappenV2/
+# Kör i repo-roten (mappen där README.md ligger)
+cp -r /mnt/c/DIN/MAPP/* .
 ```
 
 Verifiera direkt efter kopiering:
 
 ```bash
 # Kör i repo-roten
-cd /workspace/PanikknappenV2
 pwd
 rg --files
 ```
 
 Byt `DIN/MAPP` till din riktiga Windows-sökväg (samma mappar som i `C:\...`).
+
+Om du kör i Windows PowerShell (inte i container) ska du först gå till din riktiga projektmapp, t.ex.:
+
+```powershell
+# Exempel – byt sökväg till där du faktiskt har klonat repot
+cd C:\Users\lunag\Documents\GitHub\PanikknappenV2
+```
 
 Kör dessa kommandon i terminalen från repo-roten (projektmapp på GitHub):
 
@@ -450,20 +464,14 @@ För att göra allt ännu mer noob-vänligt gäller följande när AI-agenten hj
 
 ## 9) Föräldrakod i familjeläge (webb + mobil/PWA)
 
-Nu kräver familjeläget en 4-siffrig föräldrakod innan känsliga funktioner visas.
+Föräldrakod är **tillfälligt avstängd** tills låsflödet fungerar stabilt igen.
 
 ### Så funkar det nu
-- Initial testkod: `1234`.
-- Efter 3 felaktiga försök: tillfällig spärr i 30 sekunder.
-- Valbar "kom ihåg denna enhet" i 15 minuter.
-- Möjlighet att byta kod direkt i familjelägets föräldrainställningar.
-- Enkel händelselogg sparas lokalt i browsern (localStorage).
+- Familjeläget öppnas direkt utan sifferkod.
+- Ingen hårdkodad testkod används längre.
+- Säkerhetslogg i browsern (localStorage) fungerar fortsatt.
 
-### Varför detta fungerar i både webb och mobil
-- Mobilappen här är PWA (installerad webbapp), så samma kodlås körs i browser och i installerat app-läge.
-- Ingen separat implementation behövs just nu för iOS/Android så länge familjeläget körs från samma webbapp.
-
-### Smart nästa nivå (rekommenderat)
-1. Flytta kodverifiering till backend/API (serverkontroll) så PIN aldrig behöver lagras lokalt.
-2. Lägg till biometriskt lås (Face ID/Touch ID/fingeravtryck) via enhetens säkra funktioner när native wrapper finns.
-3. Lägg till adminflöde för återställning av kod via verifierad vuxenkontakt.
+### Nästa säkra återstart av kodlås
+1. Återinför kodlås med servervalidering (kontroll i backend/API) i stället för hårdkod i klienten.
+2. Lägg till tydlig testplan för felkod, spärr och "kom ihåg enhet" innan den slås på för användare.
+3. Dokumentera ny startkod per familj i säkert adminflöde i stället för gemensam demo-kod.
