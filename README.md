@@ -33,7 +33,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Tidigare utförda aktiviteter
 - Förtydligat Windows-import (filkopiering från `C:\`) med exakt copy/paste-flöde till repo (projektmapp på GitHub) i Codex-miljön, utan hårdkodad `/workspace/...`-sökväg och med exempel för mappnamn som innehåller mellanslag.
-- Nytt script `scripts/samla-repos.sh` kan nu klona/uppdatera flera repos till `import/repos/` med en enda körning, för att förenkla när du har flera separata GitHub-repos.
+- Nytt script `scripts/samla-repos.sh` kan nu både klona GitHub-repos och kopiera lokala mappar (t.ex. från `/mnt/c/...`) till `import/repos/` med en enda körning.
 - Grundstruktur för overlay finns.
 - Interaktion för drag + långtryck (5 sekunder) finns i barnappen.
 - Språkstöd (svenska/engelska) och aktiveringslogg i browser (`localStorage`) är tillagt.
@@ -195,9 +195,9 @@ rg --files
 
 Exemplet ovan matchar din aktuella mapp `C:\panikknappen ALLT`.
 
-### 3.0.1 Samla flera repositories (projektmappar) automatiskt
+### 3.0.1 Samla flera repositories/mappar automatiskt
 
-Om du har flera repos (projektmappar på GitHub), använd hjälpscriptet nedan för att samla dem i en import-mapp.
+Om du har flera repos (projektmappar på GitHub) eller lokala mappar i Windows, använd hjälpscriptet nedan för att samla allt i en import-mapp.
 
 Kör i **repo-roten**:
 
@@ -212,6 +212,17 @@ chmod +x scripts/samla-repos.sh
 ```
 
 Scriptet klonar till `import/repos/` (eller uppdaterar med `git pull` om mappen redan finns).
+
+Exempel med lokala mappar från Windows-mount (om `/mnt/c` finns i din miljö):
+
+```bash
+cd "$(git rev-parse --show-toplevel)"
+./scripts/samla-repos.sh \
+  "/mnt/c/panikknappen ALLT/PanikknappenV2" \
+  "/mnt/c/panikknappen ALLT/panik-overlay"
+```
+
+Om `/mnt/c` saknas i din Codex-session (webb), ladda upp mapparna till repo (projektmapp på GitHub) först och kör scriptet med de lokala sökvägarna där.
 
 Verifiera efteråt:
 
