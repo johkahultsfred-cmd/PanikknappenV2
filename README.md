@@ -79,6 +79,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Förtydligat (2026-02-24): om du kör i lokal Windows PowerShell ska du använda din lokala sökväg (t.ex. `C:\Users\...\PanikknappenV2`) i stället för Linux-sökvägen `/workspace/...` som bara gäller i Codex-container.
 - Uppdaterat (2026-02-24): PowerShell-exemplet pekar nu direkt på `C:\panikknappen-samlad\panik-overlay` för att matcha din aktuella lokala struktur.
 - Felsökning klar (2026-02-23): Capacitor-kommandon är nu förtydligade till `panik-overlay/`, så `android platform has not been added yet` undviks när sync körs från rätt mapp.
+- Felsökning klar (2026-02-24): Capacitor `webDir` var satt till `.` (ogiltigt i CLI v8), nu används `www` + nytt prepare-script som bygger webbfiler innan Android-sync.
 - Backendkoppling klar (2026-02-24): familjelägets snabbåtgärder sparas nu via API-endpoint (`POST /api/family-actions`) i stället för enbart simulerad lokal logg.
 - Stabilisering klar (2026-02-24): backend startar nu igen efter uppdatering av `web-push`, och snabbåtgärds-API (`POST/GET /api/family-actions`) är verifierat med lokal servertest.
 - Felsökning klar (2026-02-24): `github-pages.yml` var felkopplad till Android-build, och är nu ersatt med riktig GitHub Pages-deploy så badge/länk visar rätt workflow.
@@ -168,6 +169,13 @@ Synka sedan webbbygget till Android-projektet (kör i `panik-overlay/`):
 ```bash
 # Alla plattformar
 cd panik-overlay
+npm run cap:sync:android
+```
+
+Om du vill köra stegen separat i `panik-overlay/`:
+
+```bash
+npm run cap:prepare
 npx cap sync android
 ```
 

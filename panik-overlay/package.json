@@ -6,7 +6,9 @@
   "scripts": {
     "check": "node -e \"const fs=require('fs');['index.html','assets/css/portal.css','assets/vendor/gsap.min.js','apps/child/index.html','apps/child/style.css','apps/child/script.js','apps/family/index.html','apps/family/style.css','apps/family/script.js','assets/js/family-lock.js','server/api-server.js','data/incidents.json','data/push-subscriptions.json','data/family-actions.json'].forEach(f=>{if(!fs.existsSync(f)){throw new Error('Saknar fil: '+f)}}); console.log('OK: appstruktur finns');\"",
     "preview": "node server/api-server.js",
-    "api": "node server/api-server.js"
+    "api": "node server/api-server.js",
+    "cap:prepare": "node scripts/build-webdir.js",
+    "cap:sync:android": "npm run cap:prepare && npx cap sync android"
   },
   "dependencies": {
     "@capacitor/android": "^8.1.0",
