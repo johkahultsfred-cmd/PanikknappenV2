@@ -78,6 +78,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Felsökning klar (2026-02-23): Capacitor-kommandon är nu förtydligade till `panik-overlay/`, så `android platform has not been added yet` undviks när sync körs från rätt mapp.
 - Backendkoppling klar (2026-02-24): familjelägets snabbåtgärder sparas nu via API-endpoint (`POST /api/family-actions`) i stället för enbart simulerad lokal logg.
 - Stabilisering klar (2026-02-24): backend startar nu igen efter uppdatering av `web-push`, och snabbåtgärds-API (`POST/GET /api/family-actions`) är verifierat med lokal servertest.
+- Felsökning klar (2026-02-24): `github-pages.yml` var felkopplad till Android-build, och är nu ersatt med riktig GitHub Pages-deploy så badge/länk visar rätt workflow.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
