@@ -72,6 +72,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Plan klar (2026-02-23): native-spår (riktig mobilapp) är beskrivet steg-för-steg för overlay över andra appar, bakgrundsspårning och säker larmkedja.
 - Dokumentation fixad (2026-02-23): kommandon är nu relative (relativa sökvägar), så samma copy/paste fungerar i macOS/Linux och Windows PowerShell utan `/workspace/...`.
 - Dokumentation fixad (2026-02-23): alla kvarvarande `/workspace/...`-rader i README + NETLIFY_DEPLOY är borttagna för att undvika Windows-felet `Set-Location: Cannot find path`.
+- Felsökning klar (2026-02-23): Capacitor-kommandon är nu förtydligade till `panik-overlay/`, så `android platform has not been added yet` undviks när sync körs från rätt mapp.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -104,16 +105,23 @@ Detta spår behövs om målet är en knapp som kan ligga över andra appar/spel 
 ### Steg 1: Android wrapper (mobilskal) runt nuvarande app
 Mål: återanvänd nuvarande UI (gränssnitt) men köra som native-app (riktig mobilapp).
 
-Kör i **repo-roten** (projektmapp på GitHub):
+Kör i **repo-roten** först (projektmapp på GitHub):
+
+```bash
+# Alla plattformar
+cd panik-overlay
+```
+
+Kör sedan i **panik-overlay/**:
 
 ```bash
 # Alla plattformar (macOS/Linux/Windows PowerShell)
-# Tips: öppna terminalen direkt i PanikknappenV2-mappen först
-npx cap init panikknappen-v2 com.panikknappen.v2 --web-dir=panik-overlay
 npx cap add android
 ```
 
-Resultat: du får en Android-projektmapp där vi kan aktivera mobilbehörigheter.
+Om du redan har mappen `panik-overlay/android/` behöver du inte köra `cap add` igen.
+
+Resultat: du får (eller återanvänder) Android-projektmappen där vi kan aktivera mobilbehörigheter.
 
 ### Steg 2: Aktivera overlay + bakgrundsservice i Android
 Mål: kunna visa knapp över andra appar och hålla larmkedjan aktiv i bakgrunden.
@@ -145,11 +153,12 @@ cd panik-overlay
 npm run check
 ```
 
-Synka sedan webbbygget till Android-projektet (kör från repo-roten):
+Synka sedan webbbygget till Android-projektet (kör i `panik-overlay/`):
 
 ```bash
 # Alla plattformar
-npx cap copy android
+cd panik-overlay
+npx cap sync android
 ```
 
 ### Viktig avgränsning

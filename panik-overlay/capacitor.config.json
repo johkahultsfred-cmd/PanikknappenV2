@@ -1,7 +1,5 @@
 {
   "appId": "com.github.johkahultsfred.panikknappenv2",
   "appName": "panikknappen-v2",
-  "webDir": "npm install @capacitor/androidnpx cap add android"
-
+  "webDir": "."
 }
-
