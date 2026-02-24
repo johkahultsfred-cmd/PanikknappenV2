@@ -7,6 +7,7 @@ const webpush = require('web-push');
 const PORT = Number(process.env.PORT || 4173);
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DATA_FILE = path.join(ROOT_DIR, 'data', 'incidents.json');
+const FAMILY_ACTIONS_FILE = path.join(ROOT_DIR, 'data', 'family-actions.json');
 const SUBSCRIPTIONS_FILE = path.join(ROOT_DIR, 'data', 'push-subscriptions.json');
 const VAPID_KEYS_FILE = path.join(ROOT_DIR, 'data', 'vapid-keys.json');
 
@@ -49,6 +50,15 @@ function readPushSubscriptions() {
   return Array.isArray(parsed) ? parsed : [];
 }
 
+function readFamilyActions() {
+  const parsed = readJson(FAMILY_ACTIONS_FILE, []);
+  return Array.isArray(parsed) ? parsed : [];
+}
+
+function writeFamilyActions(items) {
+  writeJson(FAMILY_ACTIONS_FILE, items);
+}
+
 function writePushSubscriptions(items) {
   writeJson(SUBSCRIPTIONS_FILE, items);
 }
@@ -58,17 +68,38 @@ function getOrCreateVapidKeys() {
   if (existing && existing.publicKey && existing.privateKey) {
     return existing;
   }
+
+  if (typeof webpush.generateVAPIDKeys !== 'function') {
+    console.warn('Push är tillfälligt avstängt: web-push.generateVAPIDKeys saknas.');
+    return null;
+  }
+
   const keys = webpush.generateVAPIDKeys();
   writeJson(VAPID_KEYS_FILE, keys);
   return keys;
 }
 
-const vapidKeys = getOrCreateVapidKeys();
-webpush.setVapidDetails(
-  'mailto:panikknappen@example.com',
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-);
+function initPushService() {
+  const keys = getOrCreateVapidKeys();
+  if (!keys || !keys.publicKey || !keys.privateKey) {
+    return { enabled: false, keys: null };
+  }
+
+  if (typeof webpush.setVapidDetails !== 'function') {
+    console.warn('Push är tillfälligt avstängt: web-push.setVapidDetails saknas.');
+    return { enabled: false, keys: null };
+  }
+
+  webpush.setVapidDetails(
+    'mailto:panikknappen@example.com',
+    keys.publicKey,
+    keys.privateKey
+  );
+
+  return { enabled: true, keys };
+}
+
+const pushService = initPushService();
 
 function sendJson(res, statusCode, payload) {
   res.writeHead(statusCode, {
@@ -145,6 +176,10 @@ function serveStatic(req, res) {
 }
 
 async function notifyFamily(incident) {
+  if (!pushService.enabled || typeof webpush.sendNotification !== 'function') {
+    return { sent: 0, removed: 0, skipped: true };
+  }
+
   const all = readPushSubscriptions();
   const targets = all.filter((item) => item.familyId === incident.familyId && item.subscription?.endpoint);
 
@@ -194,7 +229,11 @@ async function handleApi(req, res) {
   }
 
   if (req.method === 'GET' && url.pathname === '/api/push/public-key') {
-    sendJson(res, 200, { publicKey: vapidKeys.publicKey });
+    if (!pushService.enabled) {
+      sendJson(res, 503, { error: 'Push är inte aktiv i servern just nu' });
+      return;
+    }
+    sendJson(res, 200, { publicKey: pushService.keys.publicKey });
     return;
   }
 
@@ -241,6 +280,40 @@ async function handleApi(req, res) {
       .filter((item) => !familyId || item.familyId === familyId)
       .sort((a, b) => String(b.timestamp || '').localeCompare(String(a.timestamp || '')));
     sendJson(res, 200, { incidents });
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/family-actions') {
+    const familyId = url.searchParams.get('familyId');
+    const actions = readFamilyActions()
+      .filter((item) => !familyId || item.familyId === familyId)
+      .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+    sendJson(res, 200, { actions });
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/family-actions') {
+    const body = await parseBody(req);
+    if (!body.action || !body.familyId) {
+      sendJson(res, 400, { error: 'action och familyId krävs' });
+      return;
+    }
+
+    const actionItem = {
+      id: randomUUID(),
+      familyId: body.familyId,
+      action: body.action,
+      source: body.source || 'family-app',
+      incidentId: body.incidentId || null,
+      note: body.note || '',
+      createdAt: body.createdAt || new Date().toISOString()
+    };
+
+    const actions = readFamilyActions();
+    actions.unshift(actionItem);
+    writeFamilyActions(actions.slice(0, 400));
+
+    sendJson(res, 201, { action: actionItem });
     return;
   }
 
@@ -313,6 +386,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, '0.0.0.0', () => {
   ensureDataFile(DATA_FILE, '[]');
+  ensureDataFile(FAMILY_ACTIONS_FILE, '[]');
   ensureDataFile(SUBSCRIPTIONS_FILE, '[]');
   console.log(`Panikknappen server kör på http://0.0.0.0:${PORT}`);
 });
