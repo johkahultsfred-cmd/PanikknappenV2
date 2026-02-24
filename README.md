@@ -32,8 +32,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
 
 ### Tidigare utförda aktiviteter
-- Förtydligat Windows-import (filkopiering från `C:\`) med exakt copy/paste-flöde till repo (projektmapp på GitHub) i Codex-miljön, utan hårdkodad `/workspace/...`-sökväg och med exempel för mappnamn som innehåller mellanslag.
-- Nytt script `scripts/samla-repos.sh` kan nu både klona GitHub-repos och kopiera lokala mappar (t.ex. från `/mnt/c/...`) till `import/repos/` med en enda körning.
+- Förtydligat Windows-import (filkopiering från `C:\`) med exakt copy/paste-flöde till repo (projektmapp på GitHub) i Codex-miljön.
 - Grundstruktur för overlay finns.
 - Interaktion för drag + långtryck (5 sekunder) finns i barnappen.
 - Språkstöd (svenska/engelska) och aktiveringslogg i browser (`localStorage`) är tillagt.
@@ -75,16 +74,19 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Dokumentation fixad (2026-02-23): kommandon är nu relative (relativa sökvägar), så samma copy/paste fungerar i macOS/Linux och Windows PowerShell utan `/workspace/...`.
 - Dokumentation fixad (2026-02-23): alla kvarvarande `/workspace/...`-rader i README + NETLIFY_DEPLOY är borttagna för att undvika Windows-felet `Set-Location: Cannot find path`.
 - Felsökning klar (2026-02-23): Capacitor-kommandon är nu förtydligade till `panik-overlay/`, så `android platform has not been added yet` undviks när sync körs från rätt mapp.
+- Backendkoppling klar (2026-02-24): familjelägets snabbåtgärder sparas nu via API-endpoint (`POST /api/family-actions`) i stället för enbart simulerad lokal logg.
+- Stabilisering klar (2026-02-24): backend startar nu igen efter uppdatering av `web-push`, och snabbåtgärds-API (`POST/GET /api/family-actions`) är verifierat med lokal servertest.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
-2. Koppla familjeappens snabbåtgärder till riktig backend/API i stället för simulerad logg.
-3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
+2. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
+3. Visa backend-logg för snabbåtgärder i egen vy i familjeläget.
 
 ### Pågående aktivitet (nu)
 - Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
 - Planera när föräldrakod ska slås på igen efter att åtkomstflödet är stabilt.
 - Bryta ut native-MVP (första fungerande mobilversion) med overlay-behörighet i Android och samma API-flöde som webbappen.
+- Visa historik för snabbåtgärder från backend i familjelägets UI (gränssnitt).
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
@@ -179,58 +181,19 @@ Kör i terminalen:
 
 ```bash
 # Kör i valfri mapp (kommandot använder fulla sökvägar)
-cd "$(git rev-parse --show-toplevel)"
-cp -r "/mnt/c/panikknappen ALLT"/* .
+cp -r /mnt/c/DIN/MAPP/* /workspace/PanikknappenV2/
 ```
-
-Om du vill använda en annan mapp: byt ut `"/mnt/c/panikknappen ALLT"` mot din egen sökväg (behåll citattecken om mappnamnet har mellanslag).
 
 Verifiera direkt efter kopiering:
 
 ```bash
 # Kör i repo-roten
+cd /workspace/PanikknappenV2
 pwd
 rg --files
 ```
 
-Exemplet ovan matchar din aktuella mapp `C:\panikknappen ALLT`.
-
-### 3.0.1 Samla flera repositories/mappar automatiskt
-
-Om du har flera repos (projektmappar på GitHub) eller lokala mappar i Windows, använd hjälpscriptet nedan för att samla allt i en import-mapp.
-
-Kör i **repo-roten**:
-
-```bash
-cd "$(git rev-parse --show-toplevel)"
-chmod +x scripts/samla-repos.sh
-./scripts/samla-repos.sh \
-  https://github.com/<ditt-konto>/PanikknappenV2.git \
-  https://github.com/<ditt-konto>/panik-overlay.git \
-  https://github.com/<ditt-konto>/repo-3.git \
-  https://github.com/<ditt-konto>/repo-4.git
-```
-
-Scriptet klonar till `import/repos/` (eller uppdaterar med `git pull` om mappen redan finns).
-
-Exempel med lokala mappar från Windows-mount (om `/mnt/c` finns i din miljö):
-
-```bash
-cd "$(git rev-parse --show-toplevel)"
-./scripts/samla-repos.sh \
-  "/mnt/c/panikknappen ALLT/PanikknappenV2" \
-  "/mnt/c/panikknappen ALLT/panik-overlay"
-```
-
-Om `/mnt/c` saknas i din Codex-session (webb), ladda upp mapparna till repo (projektmapp på GitHub) först och kör scriptet med de lokala sökvägarna där.
-
-Verifiera efteråt:
-
-```bash
-cd "$(git rev-parse --show-toplevel)"
-rg --files import/repos | head -n 40
-```
-
+Byt `DIN/MAPP` till din riktiga Windows-sökväg (samma mappar som i `C:\...`).
 
 Kör dessa kommandon i terminalen från repo-roten (projektmapp på GitHub):
 
