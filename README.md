@@ -32,6 +32,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
 
 ### Tidigare utförda aktiviteter
+- Förtydligat Windows-import (filkopiering från `C:\`) med exakt copy/paste-flöde till repo (projektmapp på GitHub) i Codex-miljön, utan hårdkodad `/workspace/...`-sökväg och med exempel för mappnamn som innehåller mellanslag.
 - Grundstruktur för overlay finns.
 - Interaktion för drag + långtryck (5 sekunder) finns i barnappen.
 - Språkstöd (svenska/engelska) och aktiveringslogg i browser (`localStorage`) är tillagt.
@@ -168,6 +169,30 @@ npx cap sync android
 ---
 
 ## 3) Snabbstart lokalt (exakt steg-för-steg)
+
+### 3.0 Om dina filer ligger i `C:\` (Windows)
+
+Om du sitter i Codex/container (isolierad Linux-miljö) men dina filer finns i Windows, kopiera först in dem till repo-roten (huvudmappen för projektet).
+
+Kör i terminalen:
+
+```bash
+# Kör i valfri mapp (kommandot använder fulla sökvägar)
+cd "$(git rev-parse --show-toplevel)"
+cp -r "/mnt/c/panikknappen ALLT"/* .
+```
+
+Om du vill använda en annan mapp: byt ut `"/mnt/c/panikknappen ALLT"` mot din egen sökväg (behåll citattecken om mappnamnet har mellanslag).
+
+Verifiera direkt efter kopiering:
+
+```bash
+# Kör i repo-roten
+pwd
+rg --files
+```
+
+Exemplet ovan matchar din aktuella mapp `C:\panikknappen ALLT`.
 
 Kör dessa kommandon i terminalen från repo-roten (projektmapp på GitHub):
 
