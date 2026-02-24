@@ -32,7 +32,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
 
 ### Tidigare utförda aktiviteter
-- Förtydligat Windows-import (filkopiering från `C:\`) med exakt copy/paste-flöde till repo (projektmapp på GitHub) i Codex-miljön, utan hårdkodad `/workspace/...`-sökväg.
+- Förtydligat Windows-import (filkopiering från `C:\`) med exakt copy/paste-flöde till repo (projektmapp på GitHub) i Codex-miljön.
 - Grundstruktur för overlay finns.
 - Interaktion för drag + långtryck (5 sekunder) finns i barnappen.
 - Språkstöd (svenska/engelska) och aktiveringslogg i browser (`localStorage`) är tillagt.
@@ -178,14 +178,14 @@ Kör i terminalen:
 
 ```bash
 # Kör i valfri mapp (kommandot använder fulla sökvägar)
-cd "$(git rev-parse --show-toplevel)"
-cp -r /mnt/c/DIN/MAPP/* .
+cp -r /mnt/c/DIN/MAPP/* /workspace/PanikknappenV2/
 ```
 
 Verifiera direkt efter kopiering:
 
 ```bash
 # Kör i repo-roten
+cd /workspace/PanikknappenV2
 pwd
 rg --files
 ```
