@@ -1,10 +1,4 @@
 (() => {
-  // Tillfälligt nödstopp: kodlås är avstängt.
-  // Rensar gamla låsnycklar så tidigare cache/localStorage inte låser familjeläget.
-  localStorage.removeItem('familyPinRememberUntil');
-  localStorage.removeItem('familyPinFailedAttempts');
-  localStorage.removeItem('familyPinLockUntil');
-
   const PIN_KEY = 'familyPinCode';
   const REMEMBER_UNTIL_KEY = 'familyPinRememberUntil';
   const FAILED_KEY = 'familyPinFailedAttempts';
