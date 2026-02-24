@@ -74,16 +74,19 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Dokumentation fixad (2026-02-23): kommandon är nu relative (relativa sökvägar), så samma copy/paste fungerar i macOS/Linux och Windows PowerShell utan `/workspace/...`.
 - Dokumentation fixad (2026-02-23): alla kvarvarande `/workspace/...`-rader i README + NETLIFY_DEPLOY är borttagna för att undvika Windows-felet `Set-Location: Cannot find path`.
 - Felsökning klar (2026-02-23): Capacitor-kommandon är nu förtydligade till `panik-overlay/`, så `android platform has not been added yet` undviks när sync körs från rätt mapp.
+- Backendkoppling klar (2026-02-24): familjelägets snabbåtgärder sparas nu via API-endpoint (`POST /api/family-actions`) i stället för enbart simulerad lokal logg.
+- Stabilisering klar (2026-02-24): backend startar nu igen efter uppdatering av `web-push`, och snabbåtgärds-API (`POST/GET /api/family-actions`) är verifierat med lokal servertest.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
-2. Koppla familjeappens snabbåtgärder till riktig backend/API i stället för simulerad logg.
-3. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
+2. Lägg till valbar extra säkerhet i mobil (biometri via native wrapper).
+3. Visa backend-logg för snabbåtgärder i egen vy i familjeläget.
 
 ### Pågående aktivitet (nu)
 - Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
 - Planera när föräldrakod ska slås på igen efter att åtkomstflödet är stabilt.
 - Bryta ut native-MVP (första fungerande mobilversion) med overlay-behörighet i Android och samma API-flöde som webbappen.
+- Visa historik för snabbåtgärder från backend i familjelägets UI (gränssnitt).
 
 ### Kvar att göra
 - Lägga tillbaka/ansluta serverkod för full WebSocket- och incidentkedja i detta repo.
