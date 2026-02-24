@@ -73,6 +73,8 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Plan klar (2026-02-23): native-spår (riktig mobilapp) är beskrivet steg-för-steg för overlay över andra appar, bakgrundsspårning och säker larmkedja.
 - Dokumentation fixad (2026-02-23): kommandon är nu relative (relativa sökvägar), så samma copy/paste fungerar i macOS/Linux och Windows PowerShell utan `/workspace/...`.
 - Dokumentation fixad (2026-02-23): alla kvarvarande `/workspace/...`-rader i README + NETLIFY_DEPLOY är borttagna för att undvika Windows-felet `Set-Location: Cannot find path`.
+- Förtydligat (2026-02-24): om du kör i lokal Windows PowerShell ska du använda din lokala sökväg (t.ex. `C:\Users\...\PanikknappenV2`) i stället för Linux-sökvägen `/workspace/...` som bara gäller i Codex-container.
+- Uppdaterat (2026-02-24): PowerShell-exemplet pekar nu direkt på `C:\panikknappen-samlad\panik-overlay` för att matcha din aktuella lokala struktur.
 - Felsökning klar (2026-02-23): Capacitor-kommandon är nu förtydligade till `panik-overlay/`, så `android platform has not been added yet` undviks när sync körs från rätt mapp.
 - Backendkoppling klar (2026-02-24): familjelägets snabbåtgärder sparas nu via API-endpoint (`POST /api/family-actions`) i stället för enbart simulerad lokal logg.
 - Stabilisering klar (2026-02-24): backend startar nu igen efter uppdatering av `web-push`, och snabbåtgärds-API (`POST/GET /api/family-actions`) är verifierat med lokal servertest.

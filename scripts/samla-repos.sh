@@ -17,8 +17,8 @@ Exempel 1 (GitHub-repos):
 
 Exempel 2 (Windows via /mnt/c):
   ./scripts/samla-repos.sh \
-    "/mnt/c/panikknappen ALLT/PanikknappenV2" \
-    "/mnt/c/panikknappen ALLT/panik-overlay"
+    "/mnt/c/panikknappen-samlad/PanikknappenV2" \
+    "/mnt/c/panikknappen-samlad/panik-overlay"
 
 Vad scriptet gör:
   1) Skapar mappen import/repos i repo-roten.
