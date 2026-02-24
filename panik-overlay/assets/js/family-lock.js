@@ -1,5 +1,4 @@
 (() => {
-  const DEFAULT_PIN = '1234';
   const PIN_KEY = 'familyPinCode';
   const REMEMBER_UNTIL_KEY = 'familyPinRememberUntil';
   const FAILED_KEY = 'familyPinFailedAttempts';
@@ -27,8 +26,7 @@
     if (storedPin && /^\d{4}$/.test(storedPin)) {
       return storedPin;
     }
-    localStorage.setItem(PIN_KEY, DEFAULT_PIN);
-    return DEFAULT_PIN;
+    return null;
   };
 
   const setLockMessage = (text, isError = false) => {
@@ -181,9 +179,6 @@
     });
   }
 
-  if (isRemembered()) {
-    unlockDashboard();
-  } else {
-    lockDashboard('Ange föräldrakod för att fortsätta.');
-  }
+  // Tillfälligt avstängt: kodlås stängs av tills flödet är stabilt igen.
+  unlockDashboard();
 })();

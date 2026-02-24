@@ -45,7 +45,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Ny to-do/funktionskarta är skapad i `to-do/readme.md` med uppdelning: klart, delvis klart, planerat och arkitekturstatus.
 - Portal, barnläge och familjeläge har fått ett nytt visuellt premiumlyft med responsiv layout, förbättrad typografi och tydligare CTA-kort.
 - GSAP (animationsbibliotek) är installerat och används lokalt via `assets/vendor/gsap.min.js` för mjuka mikroanimationer i barnläget.
-- Familjeläget har nu kodlås för föräldrafunktioner med initial testkod `1234`, lokal säkerhetslogg och automatisk låsning efter inaktivitet (5 minuter).
+- Familjeläget har lokal säkerhetslogg och föräldrakod-flödet ligger kvar i koden men är tillfälligt avstängt i UI tills stabil fix är klar.
 - Felsökning klar: `panik-overlay/package.json` hade dubbla `check`-nycklar (konfigurationsfält), nu ersatt med en enda check som verifierar både familjeläge-script och lås-script.
 - Felsökning klar: `scripts/netlify-deploy.sh` använder nu samma argumentkedja utan dubbletter och stödjer även `NETLIFY_SITE_ID` (site-id för direkt koppling i CI/container).
 - Förbättring klar: deploy-scriptet använder nu absolut publish-mapp, undviker `--auth`-flagga och stoppar tidigt med tydligt fel om site-id saknas i non-interactive miljö.
@@ -62,7 +62,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Förtydligat: Netlify-workflow körs nu endast manuellt (workflow_dispatch) så GitHub Pages förblir huvudspår utan automatisk Netlify-körning på `main`.
 - Uppföljning klar: PR-spåret är flyttat till branch `Variant_3` för vidare ändringar i ett eget, tydligt arbetsflöde.
 - Felsökning klar: barn- och familjesidan använder nu relativa filvägar (sökvägar utan inledande `/`) så CSS/JS/back-länkar fungerar även efter deploy på undersökväg (t.ex. GitHub Pages).
-- Felsökning klar (2026-02-18): föräldralåset i familjeläget respekterar nu `hidden`-attributet i CSS, så korrekt kod (`1234`) döljer låsskärmen och släpper fram dashboarden som tänkt.
+- Felsökning klar (2026-02-18): föräldralåset i familjeläget respekterar nu `hidden`-attributet i CSS när låsflödet används.
 - Ändring klar (2026-02-18): kodlåset i familjeläget är tillfälligt avstängt så sidan öppnas direkt utan kod medan vidare felsökning pågår.
 - Ändring klar (2026-02-18): barnläget skickar nu incidenter till gemensam larminkorg (lokal demo) och familjeläget visar dessa med status, tidsstämpel och demo-screenshot.
 - Justering klar (2026-02-18): tidigare `?simple=1`-spår är borttaget igen efter feedback.
@@ -86,7 +86,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Pågående aktivitet (nu)
 - Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
-- Planera när föräldrakod ska slås på igen efter att åtkomstflödet är stabilt.
+- Planera ny, stabil återaktivering av föräldrakod (utan hårdkodad testkod) efter verifierat låsflöde.
 - Bryta ut native-MVP (första fungerande mobilversion) med overlay-behörighet i Android och samma API-flöde som webbappen.
 - Visa historik för snabbåtgärder från backend i familjelägets UI (gränssnitt).
 
@@ -461,20 +461,14 @@ För att göra allt ännu mer noob-vänligt gäller följande när AI-agenten hj
 
 ## 9) Föräldrakod i familjeläge (webb + mobil/PWA)
 
-Nu kräver familjeläget en 4-siffrig föräldrakod innan känsliga funktioner visas.
+Föräldrakod är **tillfälligt avstängd** tills låsflödet fungerar stabilt igen.
 
 ### Så funkar det nu
-- Initial testkod: `1234`.
-- Efter 3 felaktiga försök: tillfällig spärr i 30 sekunder.
-- Valbar "kom ihåg denna enhet" i 15 minuter.
-- Möjlighet att byta kod direkt i familjelägets föräldrainställningar.
-- Enkel händelselogg sparas lokalt i browsern (localStorage).
+- Familjeläget öppnas direkt utan sifferkod.
+- Ingen hårdkodad testkod används längre.
+- Säkerhetslogg i browsern (localStorage) fungerar fortsatt.
 
-### Varför detta fungerar i både webb och mobil
-- Mobilappen här är PWA (installerad webbapp), så samma kodlås körs i browser och i installerat app-läge.
-- Ingen separat implementation behövs just nu för iOS/Android så länge familjeläget körs från samma webbapp.
-
-### Smart nästa nivå (rekommenderat)
-1. Flytta kodverifiering till backend/API (serverkontroll) så PIN aldrig behöver lagras lokalt.
-2. Lägg till biometriskt lås (Face ID/Touch ID/fingeravtryck) via enhetens säkra funktioner när native wrapper finns.
-3. Lägg till adminflöde för återställning av kod via verifierad vuxenkontakt.
+### Nästa säkra återstart av kodlås
+1. Återinför kodlås med servervalidering (kontroll i backend/API) i stället för hårdkod i klienten.
+2. Lägg till tydlig testplan för felkod, spärr och "kom ihåg enhet" innan den slås på för användare.
+3. Dokumentera ny startkod per familj i säkert adminflöde i stället för gemensam demo-kod.
