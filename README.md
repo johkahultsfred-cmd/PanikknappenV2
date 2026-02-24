@@ -1,5 +1,8 @@
 # Panikknappen V2 – noob-vänlig projektguide
 
+[![GitHub Pages Deploy](https://github.com/johkahultsfred-cmd/PanikknappenV2/actions/workflows/github-pages.yml/badge.svg)](https://github.com/johkahultsfred-cmd/PanikknappenV2/actions/workflows/github-pages.yml)
+[![Build Android APK](https://github.com/johkahultsfred-cmd/PanikknappenV2/actions/workflows/android-build.yml/badge.svg)](https://github.com/johkahultsfred-cmd/PanikknappenV2/actions/workflows/android-build.yml)
+
 Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera appen snabbt** utan att vara kodexpert.
 
 ---
@@ -73,19 +76,13 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Plan klar (2026-02-23): native-spår (riktig mobilapp) är beskrivet steg-för-steg för overlay över andra appar, bakgrundsspårning och säker larmkedja.
 - Dokumentation fixad (2026-02-23): kommandon är nu relative (relativa sökvägar), så samma copy/paste fungerar i macOS/Linux och Windows PowerShell utan `/workspace/...`.
 - Dokumentation fixad (2026-02-23): alla kvarvarande `/workspace/...`-rader i README + NETLIFY_DEPLOY är borttagna för att undvika Windows-felet `Set-Location: Cannot find path`.
+- Förtydligat (2026-02-24): om du kör i lokal Windows PowerShell ska du använda din lokala sökväg (t.ex. `C:\Users\...\PanikknappenV2`) i stället för Linux-sökvägen `/workspace/...` som bara gäller i Codex-container.
+- Uppdaterat (2026-02-24): PowerShell-exemplet pekar nu direkt på `C:\panikknappen-samlad\panik-overlay` för att matcha din aktuella lokala struktur.
 - Felsökning klar (2026-02-23): Capacitor-kommandon är nu förtydligade till `panik-overlay/`, så `android platform has not been added yet` undviks när sync körs från rätt mapp.
+- Felsökning klar (2026-02-24): Capacitor `webDir` var satt till `.` (ogiltigt i CLI v8), nu används `www` + nytt prepare-script som bygger webbfiler innan Android-sync.
 - Backendkoppling klar (2026-02-24): familjelägets snabbåtgärder sparas nu via API-endpoint (`POST /api/family-actions`) i stället för enbart simulerad lokal logg.
 - Stabilisering klar (2026-02-24): backend startar nu igen efter uppdatering av `web-push`, och snabbåtgärds-API (`POST/GET /api/family-actions`) är verifierat med lokal servertest.
-- CI-fix klar (2026-02-24): `.github/workflows/webpack.yml` kör nu i `panik-overlay/` med `npm ci` + `npm run check`, så GitHub Actions letar rätt `package.json` och undviker ENOENT-felet i repo-roten.
-- CI-fix klar (2026-02-24): Android-workflows använder nu Node 22 i GitHub Actions, så `npx cap sync android` uppfyller Capacitor-kravet (`>=22`) och slutar krascha.
-- Windows-fix klar (2026-02-24): snabbstarten använder nu relativa sökvägar och PowerShell-exempel med riktig lokal repo-mapp, så `cd workspace/PanikknappenV2`-felet undviks.
-- Tillfällig förenkling klar (2026-02-24): hårdkodad testkod är borttagen och föräldrakod är avstängd tills låsflödet är stabilt igen.
-- Cache-fix klar (2026-02-24): service worker-cache är uppdaterad till ny version så gamla låsade filer inte ligger kvar i PWA-läge.
-- Lås-fallback klar (2026-02-24): familjelägets script tvingar nu upplåst vy även om gammal lock-HTML/CSS finns kvar i cache.
-- CI-fix klar (2026-02-24): Android-build använder nu `npx cap sync android` konsekvent, så fel från fel CLI-anrop undviks i Actions-build.
-- CI-fix klar (2026-02-24): Android SDK installeras nu i Android-workflows (`android-actions/setup-android@v3`) för att undvika build-fel med exit code 1 i Gradle-steget.
-- CI-fix klar (2026-02-24): Android-workflows kör nu ordningen Java + Android SDK före `npx cap sync android`, samt `npm ci` för stabilare build i GitHub Actions.
-- Deploy-fix klar (2026-02-24): `github-pages.yml` är återställd till riktig GitHub Pages-publicering av `panik-overlay/` i stället för Android-build, så felaktiga build-fel i fel workflow undviks.
+- Felsökning klar (2026-02-24): `github-pages.yml` var felkopplad till Android-build, och är nu ersatt med riktig GitHub Pages-deploy så badge/länk visar rätt workflow.
 
 ### Föreslagna nästa aktiviteter
 1. Byt från testkod till riktig personlig kod per familj och lagra den säkrare (hash/krypterad variant).
@@ -94,7 +91,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Pågående aktivitet (nu)
 - Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
-- Bekräfta i Windows/PWA att lås-overlay inte visas efter uppdatering, och därefter planera stabil återaktivering av föräldrakod.
+- Planera ny, stabil återaktivering av föräldrakod (utan hårdkodad testkod) efter verifierat låsflöde.
 - Bryta ut native-MVP (första fungerande mobilversion) med overlay-behörighet i Android och samma API-flöde som webbappen.
 - Visa historik för snabbåtgärder från backend i familjelägets UI (gränssnitt).
 
@@ -172,6 +169,13 @@ Synka sedan webbbygget till Android-projektet (kör i `panik-overlay/`):
 ```bash
 # Alla plattformar
 cd panik-overlay
+npm run cap:sync:android
+```
+
+Om du vill köra stegen separat i `panik-overlay/`:
+
+```bash
+npm run cap:prepare
 npx cap sync android
 ```
 
