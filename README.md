@@ -33,6 +33,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 
 ### Tidigare utförda aktiviteter
 - Förtydligat Windows-import (filkopiering från `C:\`) med exakt copy/paste-flöde till repo (projektmapp på GitHub) i Codex-miljön, utan hårdkodad `/workspace/...`-sökväg och med exempel för mappnamn som innehåller mellanslag.
+- Nytt script `scripts/samla-repos.sh` kan nu klona/uppdatera flera repos till `import/repos/` med en enda körning, för att förenkla när du har flera separata GitHub-repos.
 - Grundstruktur för overlay finns.
 - Interaktion för drag + långtryck (5 sekunder) finns i barnappen.
 - Språkstöd (svenska/engelska) och aktiveringslogg i browser (`localStorage`) är tillagt.
@@ -193,6 +194,32 @@ rg --files
 ```
 
 Exemplet ovan matchar din aktuella mapp `C:\panikknappen ALLT`.
+
+### 3.0.1 Samla flera repositories (projektmappar) automatiskt
+
+Om du har flera repos (projektmappar på GitHub), använd hjälpscriptet nedan för att samla dem i en import-mapp.
+
+Kör i **repo-roten**:
+
+```bash
+cd "$(git rev-parse --show-toplevel)"
+chmod +x scripts/samla-repos.sh
+./scripts/samla-repos.sh \
+  https://github.com/<ditt-konto>/PanikknappenV2.git \
+  https://github.com/<ditt-konto>/panik-overlay.git \
+  https://github.com/<ditt-konto>/repo-3.git \
+  https://github.com/<ditt-konto>/repo-4.git
+```
+
+Scriptet klonar till `import/repos/` (eller uppdaterar med `git pull` om mappen redan finns).
+
+Verifiera efteråt:
+
+```bash
+cd "$(git rev-parse --show-toplevel)"
+rg --files import/repos | head -n 40
+```
+
 
 Kör dessa kommandon i terminalen från repo-roten (projektmapp på GitHub):
 
