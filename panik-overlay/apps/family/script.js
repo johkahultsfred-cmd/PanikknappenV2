@@ -4,6 +4,7 @@ const API_INCIDENTS_URL = "../../api/incidents";
 const PUSH_PUBLIC_KEY_URL = "../../api/push/public-key";
 const PUSH_SUBSCRIBE_URL = "../../api/push/subscribe";
 const PUSH_UNSUBSCRIBE_URL = "../../api/push/unsubscribe";
+const API_FAMILY_ACTIONS_URL = "../../api/family-actions";
 const DEFAULT_FAMILY_ID = "family-demo-1";
 const POLL_INTERVAL_MS = 10000;
 
@@ -239,6 +240,26 @@ async function markIncidentHandled(incidentId) {
   await refreshDashboard();
 }
 
+
+async function sendQuickActionToApi(action) {
+  const response = await fetch(API_FAMILY_ACTIONS_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      familyId: getFamilyId(),
+      action,
+      source: "family-app"
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`API-svar ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.action;
+}
+
 function renderNewAlarmIndicator(incidents, source) {
   if (!incidents.length) {
     newAlarmIndicator.hidden = true;
@@ -365,9 +386,14 @@ async function disablePushNotifications() {
 }
 
 document.querySelectorAll("button[data-action]").forEach((button) => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click", async () => {
     const action = button.dataset.action;
-    appendSecurityLog(`Snabbåtgärd använd: ${action}.`);
+    try {
+      const saved = await sendQuickActionToApi(action);
+      appendSecurityLog(`Snabbåtgärd sparad via API: ${saved.action}.`);
+    } catch (error) {
+      appendSecurityLog(`API nere, snabbåtgärd loggad lokalt: ${action}.`);
+    }
   });
 });
 
