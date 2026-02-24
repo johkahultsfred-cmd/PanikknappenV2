@@ -39,7 +39,6 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
 
 ### Tidigare utförda aktiviteter
-- Android CI-fix klar (2026-02-24): GitHub Actions kör nu `npm run android:apk` (webbsync + build i rätt ordning) så saknad `cordova.variables.gradle` undviks.
 - Dokumentation uppdaterad (2026-02-24): lagt till snabblänkar till Android-workflow och runs-sida högst upp i README för snabb felsökning.
 - Android-byggflöde förbättrat (2026-02-24): nytt script `npm run android:apk` kör webbsync + APK-build och ger tydligt felmeddelande om Android SDK saknas.
 - Verifiering klar (2026-02-24): APK-build stoppade i container eftersom Android SDK inte finns installerad (`ANDROID_HOME`/`local.properties` saknas), vilket nu är dokumenterat med exakt felorsak.
