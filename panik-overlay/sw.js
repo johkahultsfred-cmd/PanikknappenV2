@@ -1,4 +1,4 @@
-const CACHE_NAME = "panikknappen-v2-shell-v4";
+const CACHE_NAME = "panikknappen-v2-shell-v5";
 const APP_SHELL_FILES = [
   "./",
   "index.html",
