@@ -182,20 +182,26 @@ Om du sitter i Codex/container (isolierad Linux-miljö) men dina filer finns i W
 Kör i terminalen:
 
 ```bash
-# Kör i valfri mapp (kommandot använder fulla sökvägar)
-cp -r /mnt/c/DIN/MAPP/* /workspace/PanikknappenV2/
+# Kör i repo-roten (mappen där README.md ligger)
+cp -r /mnt/c/DIN/MAPP/* .
 ```
 
 Verifiera direkt efter kopiering:
 
 ```bash
 # Kör i repo-roten
-cd /workspace/PanikknappenV2
 pwd
 rg --files
 ```
 
 Byt `DIN/MAPP` till din riktiga Windows-sökväg (samma mappar som i `C:\...`).
+
+Om du kör i Windows PowerShell (inte i container) ska du först gå till din riktiga projektmapp, t.ex.:
+
+```powershell
+# Exempel – byt sökväg till där du faktiskt har klonat repot
+cd C:\Users\lunag\Documents\GitHub\PanikknappenV2
+```
 
 Kör dessa kommandon i terminalen från repo-roten (projektmapp på GitHub):
 
