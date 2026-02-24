@@ -34,11 +34,8 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
+      - name: Sync web + build APK
+        run: npm run android:apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

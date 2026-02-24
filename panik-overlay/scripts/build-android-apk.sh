@@ -19,7 +19,7 @@ fi
 echo "Steg 1/2: synkar webbfiler till Android-projekt..."
 cd "$ROOT_DIR"
 node scripts/build-webdir.js
-npx @capacitor/cli@7 sync android
+npx cap sync android
 
 echo "Steg 2/2: bygger debug APK..."
 cd "$ANDROID_DIR"
