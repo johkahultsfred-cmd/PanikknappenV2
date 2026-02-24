@@ -24,6 +24,24 @@ const disablePushBtn = document.getElementById("disablePushBtn");
 
 let latestKnownIncidentId = null;
 
+function forceUnlockLegacyFamilyLock() {
+  const familyShell = document.getElementById("familyShell");
+  if (familyShell) {
+    familyShell.removeAttribute("data-locked");
+  }
+
+  const lockScreen = document.getElementById("parent-lock");
+  if (lockScreen) {
+    lockScreen.hidden = true;
+    lockScreen.style.display = "none";
+  }
+
+  const dashboard = document.getElementById("family-dashboard");
+  if (dashboard) {
+    dashboard.hidden = false;
+  }
+}
+
 function getFamilyId() {
   const fromQuery = new URLSearchParams(window.location.search).get("familyId");
   if (fromQuery) {
@@ -407,6 +425,7 @@ window.addEventListener("storage", (event) => {
 enablePushBtn.addEventListener("click", enablePushNotifications);
 disablePushBtn.addEventListener("click", disablePushNotifications);
 
+forceUnlockLegacyFamilyLock();
 refreshDashboard();
 renderSecurityLog();
 startPolling();
