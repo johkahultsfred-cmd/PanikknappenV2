@@ -32,6 +32,8 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
 
 ### Tidigare utförda aktiviteter
+- Förtydligat Windows-import (filkopiering från `C:\`) med exakt copy/paste-flöde till repo (projektmapp på GitHub) i Codex-miljön, utan hårdkodad `/workspace/...`-sökväg och med exempel för mappnamn som innehåller mellanslag.
+- Nytt script `scripts/samla-repos.sh` kan nu både klona GitHub-repos och kopiera lokala mappar (t.ex. från `/mnt/c/...`) till `import/repos/` med en enda körning.
 - Grundstruktur för overlay finns.
 - Interaktion för drag + långtryck (5 sekunder) finns i barnappen.
 - Språkstöd (svenska/engelska) och aktiveringslogg i browser (`localStorage`) är tillagt.
@@ -72,6 +74,10 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Plan klar (2026-02-23): native-spår (riktig mobilapp) är beskrivet steg-för-steg för overlay över andra appar, bakgrundsspårning och säker larmkedja.
 - Dokumentation fixad (2026-02-23): kommandon är nu relative (relativa sökvägar), så samma copy/paste fungerar i macOS/Linux och Windows PowerShell utan `/workspace/...`.
 - Dokumentation fixad (2026-02-23): alla kvarvarande `/workspace/...`-rader i README + NETLIFY_DEPLOY är borttagna för att undvika Windows-felet `Set-Location: Cannot find path`.
+- Förtydligat (2026-02-24): om du kör i lokal Windows PowerShell ska du använda din lokala sökväg (t.ex. `C:\Users\...\PanikknappenV2`) i stället för Linux-sökvägen `/workspace/...` som bara gäller i Codex-container.
+- Uppdaterat (2026-02-24): PowerShell-exemplet pekar nu direkt på `C:\panikknappen-samlad\panik-overlay` för att matcha din aktuella lokala struktur.
+- Verifierat (2026-02-24): lokal preview kör nu korrekt i Windows PowerShell från `C:\panikknappen-samlad\panik-overlay` och visar `http://localhost:4173`.
+- Förtydligat (2026-02-24): om prompten redan är `PS C:\panikknappen-samlad>` ska du köra `cd .\panik-overlay` (relativ sökväg) och inte lägga till `workspace/...`.
 - Felsökning klar (2026-02-23): Capacitor-kommandon är nu förtydligade till `panik-overlay/`, så `android platform has not been added yet` undviks när sync körs från rätt mapp.
 
 ### Föreslagna nästa aktiviteter
@@ -168,6 +174,94 @@ npx cap sync android
 ---
 
 ## 3) Snabbstart lokalt (exakt steg-för-steg)
+
+### Viktigt: välj rätt sökväg för din miljö
+
+- **Codex/container (Linux-miljö):** använd sökvägar som börjar med `/workspace/...`.
+- **Windows PowerShell lokalt:** använd sökvägar som börjar med `C:\\...` (inte `/workspace/...`).
+
+Om du får felet `Set-Location: Cannot find path 'C:\\workspace\...'` betyder det att du kör Linux-sökväg i PowerShell.
+
+Kör detta i **Windows PowerShell** (lokal terminal på din dator):
+
+```powershell
+cd "C:\panikknappen-samlad\panik-overlay"
+npm run check
+npm run preview
+```
+
+> Exemplet ovan matchar din nuvarande mapp: `C:\panikknappen-samlad`.
+
+Om du redan står i `PS C:\panikknappen-samlad>` kör exakt detta i **Windows PowerShell**:
+
+```powershell
+cd .\panik-overlay
+npm run check
+npm run preview
+```
+
+> Viktigt: lägg inte till `workspace/PanikknappenV2` i din Windows-sökväg. Det är en Linux-sökväg för Codex-container, inte för lokal PowerShell.
+
+### 3.0 Om dina filer ligger i `C:\` (Windows)
+
+Om du sitter i Codex/container (isolierad Linux-miljö) men dina filer finns i Windows, kopiera först in dem till repo-roten (huvudmappen för projektet).
+
+Kör i terminalen:
+
+```bash
+# Kör i valfri mapp (kommandot använder fulla sökvägar)
+cd "$(git rev-parse --show-toplevel)"
+cp -r "/mnt/c/panikknappen-samlad"/* .
+```
+
+Om du vill använda en annan mapp: byt ut `"/mnt/c/panikknappen-samlad"` mot din egen sökväg (behåll citattecken om mappnamnet har mellanslag).
+
+Verifiera direkt efter kopiering:
+
+```bash
+# Kör i repo-roten
+pwd
+rg --files
+```
+
+Exemplet ovan matchar din aktuella mapp `C:\panikknappen-samlad`.
+
+### 3.0.1 Samla flera repositories/mappar automatiskt
+
+Om du har flera repos (projektmappar på GitHub) eller lokala mappar i Windows, använd hjälpscriptet nedan för att samla allt i en import-mapp.
+
+Kör i **repo-roten**:
+
+```bash
+cd "$(git rev-parse --show-toplevel)"
+chmod +x scripts/samla-repos.sh
+./scripts/samla-repos.sh \
+  https://github.com/<ditt-konto>/PanikknappenV2.git \
+  https://github.com/<ditt-konto>/panik-overlay.git \
+  https://github.com/<ditt-konto>/repo-3.git \
+  https://github.com/<ditt-konto>/repo-4.git
+```
+
+Scriptet klonar till `import/repos/` (eller uppdaterar med `git pull` om mappen redan finns).
+
+Exempel med lokala mappar från Windows-mount (om `/mnt/c` finns i din miljö):
+
+```bash
+cd "$(git rev-parse --show-toplevel)"
+./scripts/samla-repos.sh \
+  "/mnt/c/panikknappen-samlad/PanikknappenV2" \
+  "/mnt/c/panikknappen-samlad/panik-overlay"
+```
+
+Om `/mnt/c` saknas i din Codex-session (webb), ladda upp mapparna till repo (projektmapp på GitHub) först och kör scriptet med de lokala sökvägarna där.
+
+Verifiera efteråt:
+
+```bash
+cd "$(git rev-parse --show-toplevel)"
+rg --files import/repos | head -n 40
+```
+
 
 Kör dessa kommandon i terminalen från repo-roten (projektmapp på GitHub):
 
