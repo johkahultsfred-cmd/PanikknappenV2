@@ -1,5 +1,8 @@
 # Panikknappen V2 – noob-vänlig projektguide
 
+[![GitHub Pages Deploy](https://github.com/johkahultsfred-cmd/PanikknappenV2/actions/workflows/github-pages.yml/badge.svg)](https://github.com/johkahultsfred-cmd/PanikknappenV2/actions/workflows/github-pages.yml)
+[![Build Android APK](https://github.com/johkahultsfred-cmd/PanikknappenV2/actions/workflows/android-build.yml/badge.svg)](https://github.com/johkahultsfred-cmd/PanikknappenV2/actions/workflows/android-build.yml)
+
 Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera appen snabbt** utan att vara kodexpert.
 
 ---
