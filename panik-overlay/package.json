@@ -8,7 +8,8 @@
     "preview": "node server/api-server.js",
     "api": "node server/api-server.js",
     "cap:prepare": "node scripts/build-webdir.js",
-    "cap:sync:android": "npm run cap:prepare && npx cap sync android"
+    "cap:sync:android": "npm run cap:prepare && npx cap sync android",
+    "android:apk": "bash scripts/build-android-apk.sh"
   },
   "dependencies": {
     "@capacitor/android": "^8.1.0",
