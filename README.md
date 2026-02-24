@@ -35,6 +35,8 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
 
 ### Tidigare utförda aktiviteter
+- Android-byggflöde förbättrat (2026-02-24): nytt script `npm run android:apk` kör webbsync + APK-build och ger tydligt felmeddelande om Android SDK saknas.
+- Verifiering klar (2026-02-24): APK-build stoppade i container eftersom Android SDK inte finns installerad (`ANDROID_HOME`/`local.properties` saknas), vilket nu är dokumenterat med exakt felorsak.
 - Förtydligat Windows-import (filkopiering från `C:\`) med exakt copy/paste-flöde till repo (projektmapp på GitHub) i Codex-miljön.
 - Grundstruktur för overlay finns.
 - Interaktion för drag + långtryck (5 sekunder) finns i barnappen.
@@ -177,6 +179,12 @@ Om du vill köra stegen separat i `panik-overlay/`:
 ```bash
 npm run cap:prepare
 npx cap sync android
+```
+
+Snabbaste helflöde (kör i `panik-overlay/`):
+
+```bash
+npm run android:apk
 ```
 
 ### Viktig avgränsning
