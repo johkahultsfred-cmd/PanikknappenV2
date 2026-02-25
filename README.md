@@ -39,6 +39,8 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
 
 ### Tidigare utförda aktiviteter
+- Netlify-deploy testad (2026-02-25): `npx netlify-cli deploy --dir=panik-overlay` stoppade i container eftersom browser-login inte kan öppnas automatiskt; deploy fortsätter direkt när `NETLIFY_AUTH_TOKEN` är satt.
+- Repo-städning klar (2026-02-25): inaktiva filer/mappar är borttagna för enklare översikt, och `.gitignore` är tillagd så nya lokala beroendefiler (`node_modules`) inte stör översikten i status.
 - Dokumentation uppdaterad (2026-02-24): lagt till snabblänkar till Android-workflow och runs-sida högst upp i README för snabb felsökning.
 - Android-byggflöde förbättrat (2026-02-24): nytt script `npm run android:apk` kör webbsync + APK-build och ger tydligt felmeddelande om Android SDK saknas.
 - Verifiering klar (2026-02-24): APK-build stoppade i container eftersom Android SDK inte finns installerad (`ANDROID_HOME`/`local.properties` saknas), vilket nu är dokumenterat med exakt felorsak.
@@ -52,7 +54,6 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Netlify-konfiguration (`netlify.toml`) är verifierad med `publish = "panik-overlay"`, Node 20 och redirect för SPA (single page app/en-sides-app).
 - Deploy-test via `npx netlify-cli deploy --dir=panik-overlay` är kört i CI/container och stoppade vid Netlify-login (inloggning) eftersom browser-öppning saknas i miljön.
 - Nytt hjälpscript `scripts/netlify-deploy.sh` finns för preview/prod-deploy (publicering) med samma mappval (`panik-overlay`) och stöd för `NETLIFY_AUTH_TOKEN` (token för inloggad CLI-körning utan browser).
-- Ny to-do/funktionskarta är skapad i `to-do/readme.md` med uppdelning: klart, delvis klart, planerat och arkitekturstatus.
 - Portal, barnläge och familjeläge har fått ett nytt visuellt premiumlyft med responsiv layout, förbättrad typografi och tydligare CTA-kort.
 - GSAP (animationsbibliotek) är installerat och används lokalt via `assets/vendor/gsap.min.js` för mjuka mikroanimationer i barnläget.
 - Familjeläget har lokal säkerhetslogg och föräldrakod-flödet ligger kvar i koden men är tillfälligt avstängt i UI tills stabil fix är klar.
@@ -97,7 +98,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Visa backend-logg för snabbåtgärder i egen vy i familjeläget.
 
 ### Pågående aktivitet (nu)
-- Verifiera nästa online-deploy efter länkfixen för barn/familj och bekräfta att båda undersidorna laddar korrekt.
+- Slutföra nästa online-deploy genom token-baserad Netlify-login (utan browser) och bekräfta att barn/familj-undersidorna laddar korrekt.
 - Planera ny, stabil återaktivering av föräldrakod (utan hårdkodad testkod) efter verifierat låsflöde.
 - Bryta ut native-MVP (första fungerande mobilversion) med overlay-behörighet i Android och samma API-flöde som webbappen.
 - Visa historik för snabbåtgärder från backend i familjelägets UI (gränssnitt).
