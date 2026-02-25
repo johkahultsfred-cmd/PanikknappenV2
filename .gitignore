@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+panik-overlay/node_modules/
+
+# Build/artifacts
+panik-overlay/android/app/build/
+panik-overlay/www/
+
+# Local env and logs
+.env
+.env.*
+*.log
+.DS_Store
