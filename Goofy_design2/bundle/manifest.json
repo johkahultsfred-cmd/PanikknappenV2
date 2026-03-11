@@ -1,0 +1,20 @@
+{
+  "name": "PAN1K KnApPen!!!",
+  "short_name": "KnApPen",
+  "description": "Profilväljare för barn och tonåringar med föräldrakontroll",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a14",
+  "theme_color": "#16B7C9",
+  "lang": "sv",
+  "categories": ["kids", "entertainment", "utilities"],
+  "icons": [
+    {
+      "src": "assets/image9.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

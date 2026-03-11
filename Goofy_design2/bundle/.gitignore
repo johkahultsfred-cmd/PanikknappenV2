@@ -1,0 +1,35 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Node (if ever needed for tooling)
+node_modules/
+npm-debug.log*
+
+# Build artifacts
+dist/
+build/
+
+# Environment
+.env
+.env.local
+
+# Lokala designbilder (binärfiler)
+assets/*.png
+!assets/.gitkeep
+!assets/README-assets.md
