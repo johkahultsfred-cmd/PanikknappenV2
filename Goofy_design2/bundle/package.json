@@ -1,0 +1,15 @@
+{
+  "name": "panik-knappen",
+  "version": "1.0.0",
+  "description": "PAN1K KnApPen!!! — mobilapp-UI profilväljare, PWA",
+  "private": true,
+  "scripts": {
+    "start":   "npx serve . --listen 8080",
+    "dev":     "npx serve . --listen 8080",
+    "preview": "npx serve . --listen 3000"
+  },
+  "keywords": ["pwa", "kids", "profile-selector", "swedish"],
+  "engines": {
+    "node": ">=18"
+  }
+}

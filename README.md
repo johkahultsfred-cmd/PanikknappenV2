@@ -39,6 +39,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
 
 ### Tidigare utförda aktiviteter
+- PR-fix klar (2026-03-11): `Goofy_design2/bundle/assets/*.png` är borttagna från git för att undvika larm om binärfiler i ändringsförslag, med ny lokal instruktion för att packa upp bilderna vid behov.
 - Repo-städning klar (2026-02-25): inaktiva filer/mappar är borttagna för enklare översikt, och `.gitignore` är tillagd så nya lokala beroendefiler (`node_modules`) inte stör översikten i status.
 - Dokumentation uppdaterad (2026-02-24): lagt till snabblänkar till Android-workflow och runs-sida högst upp i README för snabb felsökning.
 - Android-byggflöde förbättrat (2026-02-24): nytt script `npm run android:apk` kör webbsync + APK-build och ger tydligt felmeddelande om Android SDK saknas.
@@ -97,6 +98,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Visa backend-logg för snabbåtgärder i egen vy i familjeläget.
 
 ### Pågående aktivitet (nu)
+- Säkerställa att designbundle kan delas utan binärfils-larm i PR och att lokala återställningssteg för bilder är tydligt dokumenterade.
 - Verifiera nästa online-deploy efter repo-städning och bekräfta att barn/familj-undersidorna laddar korrekt.
 - Planera ny, stabil återaktivering av föräldrakod (utan hårdkodad testkod) efter verifierat låsflöde.
 - Bryta ut native-MVP (första fungerande mobilversion) med overlay-behörighet i Android och samma API-flöde som webbappen.
