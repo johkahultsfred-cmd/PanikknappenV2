@@ -38,6 +38,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
 
 ### Tidigare utförda aktiviteter
+- Netlify-konfiguration uppdaterad (2026-03-11): `scripts/netlify-deploy.sh` har nu färdiga lägen `hook-preview`, `hook-preview-2` och `hook-prod` för de sparade Netlify-hookarna, och preview-hook triggas verifierat från repo-roten.
 - Appbyte klart (2026-03-11): tidigare aktiva `panik-overlay/` är arkiverad till `archive/panik-overlay-legacy/`, och ny aktiv app är nu `Goofy_design2/bundle/` för lokal körning och deploy (publicering).
 - PR-fix klar (2026-03-11): `Goofy_design2/bundle/assets/*.png` är borttagna från git för att undvika larm om binärfiler i ändringsförslag, med ny lokal instruktion för att packa upp bilderna vid behov.
 - Repo-städning klar (2026-02-25): inaktiva filer/mappar är borttagna för enklare översikt, och `.gitignore` är tillagd så nya lokala beroendefiler (`node_modules`) inte stör översikten i status.

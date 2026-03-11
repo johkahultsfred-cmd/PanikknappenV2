@@ -12,7 +12,9 @@ Den här guiden är för dig som vill deploya (publicera till webben) med minsta
 Kör i **repo-roten** (projektmapp på GitHub):
 
 ```bash
-./scripts/netlify-deploy.sh preview
+./scripts/netlify-deploy.sh hook-preview
+# alternativ preview-hook 2:
+./scripts/netlify-deploy.sh hook-preview-2
 ```
 
 ## 2) Produktionsdeploy (live-länk)
@@ -20,6 +22,8 @@ Kör i **repo-roten** (projektmapp på GitHub):
 Kör i **repo-roten** (projektmapp på GitHub):
 
 ```bash
+./scripts/netlify-deploy.sh hook-prod
+# eller via CLI (kräver token/site-id):
 ./scripts/netlify-deploy.sh prod
 ```
 
@@ -47,6 +51,20 @@ Scriptet accepterar bara Netlify-hookar i format:
 - `https://api.netlify.com/build_hooks/<id>`
 - `https://api.netlify.com/preview_server_hooks/<id>`
 
+
+
+## 2.3) Förinställda hook-lägen i scriptet
+
+Kör i **repo-roten** (projektmapp på GitHub):
+
+```bash
+./scripts/netlify-deploy.sh hook-preview
+./scripts/netlify-deploy.sh hook-preview-2
+./scripts/netlify-deploy.sh hook-prod
+```
+
+Du kan fortfarande skriva över dessa med env (miljövariabler):
+`NETLIFY_PREVIEW_HOOK_PRIMARY`, `NETLIFY_PREVIEW_HOOK_SECONDARY`, `NETLIFY_BUILD_HOOK_PROD`.
 
 ## 2.2) Deploy via GitHub Actions (webb)
 
