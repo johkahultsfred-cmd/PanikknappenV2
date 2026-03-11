@@ -8,13 +8,18 @@ AUTH_TOKEN="${NETLIFY_AUTH_TOKEN:-}"
 SITE_ID="${NETLIFY_SITE_ID:-}"
 DEPLOY_HOOK_URL="${2:-${NETLIFY_DEPLOY_HOOK_URL:-}}"
 
+# Förvald hook-konfiguration för denna site (kan skrivas över med env)
+PREVIEW_HOOK_PRIMARY="${NETLIFY_PREVIEW_HOOK_PRIMARY:-https://api.netlify.com/preview_server_hooks/69b0f2e6c894b1ae3204a154}"
+PREVIEW_HOOK_SECONDARY="${NETLIFY_PREVIEW_HOOK_SECONDARY:-https://api.netlify.com/preview_server_hooks/69b0f2ca19e699c7279f9f4f}"
+BUILD_HOOK_PROD="${NETLIFY_BUILD_HOOK_PROD:-https://api.netlify.com/build_hooks/69b0f26b94a917ca29ceef05}"
+
 if [[ ! -d "$PUBLISH_DIR" ]]; then
   echo "Fel: hittar inte mappen Goofy_design2/bundle i repo-roten."
   exit 1
 fi
 
-if [[ "$MODE" != "preview" && "$MODE" != "prod" && "$MODE" != "hook" ]]; then
-  echo "Användning: ./scripts/netlify-deploy.sh [preview|prod|hook] [hook-url]"
+if [[ "$MODE" != "preview" && "$MODE" != "prod" && "$MODE" != "hook" && "$MODE" != "hook-preview" && "$MODE" != "hook-preview-2" && "$MODE" != "hook-prod" ]]; then
+  echo "Användning: ./scripts/netlify-deploy.sh [preview|prod|hook|hook-preview|hook-preview-2|hook-prod] [hook-url]"
   exit 1
 fi
 
@@ -30,10 +35,62 @@ print_hook_recovery_steps() {
   echo "  3) Kör i repo-roten: ./scripts/netlify-deploy.sh hook '<ny-build-hook-url>'"
 }
 
+trigger_hook_deploy() {
+  local hook_url="$1"
+  local response_file
+  local hook_response_code
+
+  response_file="$(mktemp)"
+  trigger_hook() {
+    local url="$1"
+    curl --silent --output "$response_file" --write-out '%{http_code}' -X POST -H "Content-Type: application/json" -d '{}' "$url" || true
+  }
+
+  hook_response_code="$(trigger_hook "$hook_url")"
+
+  if [[ "$hook_response_code" =~ ^20[012]$ ]]; then
+    cat "$response_file"
+    echo
+    echo "Hook deploy triggat. Kontrollera status i Netlify UI > Deploys."
+    rm -f "$response_file"
+    return 0
+  fi
+
+  if [[ "$hook_response_code" == "404" && "$hook_url" == *"/preview_server_hooks/"* ]]; then
+    local fallback_hook_url
+    fallback_hook_url="${hook_url/\/preview_server_hooks\//\/build_hooks\/}"
+    echo "Hook-URL gav 404. Försöker fallback till build_hooks-endpoint..."
+    hook_response_code="$(trigger_hook "$fallback_hook_url")"
+    if [[ "$hook_response_code" =~ ^20[012]$ ]]; then
+      cat "$response_file"
+      echo
+      echo "Hook deploy triggat via fallback-endpoint. Kontrollera status i Netlify UI > Deploys."
+      rm -f "$response_file"
+      return 0
+    fi
+  fi
+
+  echo "Fel: deploy-hook misslyckades (HTTP $hook_response_code)."
+  print_hook_recovery_steps
+  rm -f "$response_file"
+  return 1
+}
+
 cd "$ROOT_DIR"
 
 echo "Kör Netlify deploy från: $ROOT_DIR"
 echo "Publicerar mapp: $PUBLISH_DIR"
+
+if [[ "$MODE" == "hook-preview" ]]; then
+  DEPLOY_HOOK_URL="$PREVIEW_HOOK_PRIMARY"
+  MODE="hook"
+elif [[ "$MODE" == "hook-preview-2" ]]; then
+  DEPLOY_HOOK_URL="$PREVIEW_HOOK_SECONDARY"
+  MODE="hook"
+elif [[ "$MODE" == "hook-prod" ]]; then
+  DEPLOY_HOOK_URL="$BUILD_HOOK_PROD"
+  MODE="hook"
+fi
 
 if [[ "$MODE" == "hook" ]]; then
   if [[ -z "$DEPLOY_HOOK_URL" ]]; then
@@ -48,38 +105,8 @@ if [[ "$MODE" == "hook" ]]; then
     exit 1
   fi
 
-  RESPONSE_FILE="$(mktemp)"
-  trap 'rm -f "$RESPONSE_FILE"' EXIT
-
-  trigger_hook() {
-    local url="$1"
-    curl --silent --output "$RESPONSE_FILE" --write-out '%{http_code}' -X POST -H "Content-Type: application/json" -d '{}' "$url" || true
-  }
-
-  HOOK_RESPONSE_CODE="$(trigger_hook "$DEPLOY_HOOK_URL")"
-
-  if [[ "$HOOK_RESPONSE_CODE" =~ ^20[012]$ ]]; then
-    cat "$RESPONSE_FILE"
-    echo
-    echo "Hook deploy triggat. Kontrollera status i Netlify UI > Deploys."
-    exit 0
-  fi
-
-  if [[ "$HOOK_RESPONSE_CODE" == "404" && "$DEPLOY_HOOK_URL" == *"/preview_server_hooks/"* ]]; then
-    FALLBACK_HOOK_URL="${DEPLOY_HOOK_URL/\/preview_server_hooks\//\/build_hooks\/}"
-    echo "Hook-URL gav 404. Försöker fallback till build_hooks-endpoint..."
-    HOOK_RESPONSE_CODE="$(trigger_hook "$FALLBACK_HOOK_URL")"
-    if [[ "$HOOK_RESPONSE_CODE" =~ ^20[012]$ ]]; then
-      cat "$RESPONSE_FILE"
-      echo
-      echo "Hook deploy triggat via fallback-endpoint. Kontrollera status i Netlify UI > Deploys."
-      exit 0
-    fi
-  fi
-
-  echo "Fel: deploy-hook misslyckades (HTTP $HOOK_RESPONSE_CODE)."
-  print_hook_recovery_steps
-  exit 1
+  trigger_hook_deploy "$DEPLOY_HOOK_URL"
+  exit $?
 fi
 
 if [[ -z "$AUTH_TOKEN" && ! -t 1 ]]; then
