@@ -16,10 +16,9 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 **Idé:** En flytande panikknapp-overlay som kan dras runt på skärmen och triggas med långt tryck.
 
 **Kodplats:**
-- Appportal (ingång): `panik-overlay/index.html`
-- Barnapp: `panik-overlay/apps/child/`
-- Familjeapp (designförslag): `panik-overlay/apps/family/`
-- Electron-fil (lokal desktop-körning): `panik-overlay/main.js`
+- Aktiv webbapp (ingång): `Goofy_design2/bundle/index.html`
+- Aktiv app-kod (CSS/JS/PWA): `Goofy_design2/bundle/`
+- Arkiverad tidigare app: `archive/panik-overlay-legacy/`
 
 ---
 
@@ -39,6 +38,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
 
 ### Tidigare utförda aktiviteter
+- Appbyte klart (2026-03-11): tidigare aktiva `panik-overlay/` är arkiverad till `archive/panik-overlay-legacy/`, och ny aktiv app är nu `Goofy_design2/bundle/` för lokal körning och deploy (publicering).
 - PR-fix klar (2026-03-11): `Goofy_design2/bundle/assets/*.png` är borttagna från git för att undvika larm om binärfiler i ändringsförslag, med ny lokal instruktion för att packa upp bilderna vid behov.
 - Repo-städning klar (2026-02-25): inaktiva filer/mappar är borttagna för enklare översikt, och `.gitignore` är tillagd så nya lokala beroendefiler (`node_modules`) inte stör översikten i status.
 - Dokumentation uppdaterad (2026-02-24): lagt till snabblänkar till Android-workflow och runs-sida högst upp i README för snabb felsökning.
@@ -51,7 +51,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Ny app-portal finns i `panik-overlay/index.html` med två val: barnapp och familjeapp.
 - Barnappen använder nu SVG-knappen med animation i `panik-overlay/apps/child/`.
 - Förslag på familjeapp-design finns i `panik-overlay/apps/family/`.
-- Netlify-konfiguration (`netlify.toml`) är verifierad med `publish = "panik-overlay"`, Node 20 och redirect för SPA (single page app/en-sides-app).
+- Netlify-konfiguration (`netlify.toml`) är verifierad med `publish = "Goofy_design2/bundle"`, Node 20 och redirect för SPA (single page app/en-sides-app).
 - Deploy-test via `npx netlify-cli deploy --dir=panik-overlay` är kört i CI/container och stoppade vid Netlify-login (inloggning) eftersom browser-öppning saknas i miljön.
 - Nytt hjälpscript `scripts/netlify-deploy.sh` finns för preview/prod-deploy (publicering) med samma mappval (`panik-overlay`) och stöd för `NETLIFY_AUTH_TOKEN` (token för inloggad CLI-körning utan browser).
 - Portal, barnläge och familjeläge har fått ett nytt visuellt premiumlyft med responsiv layout, förbättrad typografi och tydligare CTA-kort.
@@ -111,7 +111,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 - Återaktivera kodlåset i familjeläget när inloggningsflödet fungerar stabilt för testgruppen.
 - Definiera vilka loggfält som ska exporteras/delas utanför browsern.
 - Fortsätt använda parentesförklaringar för tekniska ord i all användarnära dokumentation.
-- Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=panik-overlay`) efter att CLI-login är klart eller `NETLIFY_AUTH_TOKEN` + `NETLIFY_SITE_ID` är satta i miljön.
+- Slutföra produktionsdeploy med `./scripts/netlify-deploy.sh prod` (eller `netlify deploy --prod --dir=Goofy_design2/bundle`) efter att CLI-login är klart eller `NETLIFY_AUTH_TOKEN` + `NETLIFY_SITE_ID` är satta i miljön.
 - Flytta föräldrakod till servervalidering för att undvika att kod ligger synligt i klientkod.
 - Bygg riktig push-notis (mobilnotis) + backend-lagring så familjen får signal även på annan enhet än samma browser-data.
 - För notiser mellan olika telefoner behövs backend + push-tjänst (server + push), lokal demo visar idag flödet i browsern och är nästa steg att koppla till riktig server.
@@ -329,7 +329,7 @@ Mål: få en **publik URL** för preview/test.
 Vill du ha en kort variant? Öppna `NETLIFY_DEPLOY.md` (snabbguide med copy/paste-kommandon).
 
 Repo:t har nu en `netlify.toml` (Netlify konfigurationsfil) i repo-roten som pekar ut:
-- `publish = "panik-overlay"` (mappen som ska publiceras)
+- `publish = "Goofy_design2/bundle"` (mappen som ska publiceras)
 - redirect-regel för `/*` till `/index.html` (gör att sidan laddar rätt även om du öppnar en undersökväg).
 
 1. Öppna repo:t i GitHub (webb).
@@ -365,7 +365,7 @@ Om du får felet:
 ./scripts/netlify-deploy.sh prod
 ```
 
-Scriptet använder `npx netlify-cli` (engångskörning av CLI utan global installation) och publicerar alltid från `panik-overlay`.
+Scriptet använder `npx netlify-cli` (engångskörning av CLI utan global installation) och publicerar alltid från `Goofy_design2/bundle`.
 
 ### 4.2 Deploy via Netlify UI (webbläsare)
 
@@ -377,7 +377,7 @@ Scriptet använder `npx netlify-cli` (engångskörning av CLI utan global instal
 Alternativ med CLI (terminalverktyg), från repo-roten:
 
 ```bash
-netlify deploy --dir=panik-overlay
+netlify deploy --dir=Goofy_design2/bundle
 ```
 
 Kör i **repo-roten i Codex (webb)**:
@@ -401,15 +401,15 @@ Om du i stället vill använda merge (sammanfogning) som standard i detta repo:
 
 ### 4.4 Krav i GitHub/Netlify för live API + app
 1. **GitHub (webb):** pusha ändringar till branch och mergea till `main`.
-2. **Netlify (webb):** Site settings → Build & deploy → Publish directory = `panik-overlay`.
+2. **Netlify (webb):** Site settings → Build & deploy → Publish directory = `Goofy_design2/bundle`.
 3. Om du vill köra separat backend senare: sätt `API_BASE_URL` som miljövariabel i Netlify under **Site settings → Environment variables**.
 4. Kör deploy (publicera) med:
 ```bash
-netlify deploy --dir=panik-overlay
+netlify deploy --dir=Goofy_design2/bundle
 ```
 Produktion:
 ```bash
-netlify deploy --prod --dir=panik-overlay
+netlify deploy --prod --dir=Goofy_design2/bundle
 ```
 
 Tips: använd samma strategi varje gång i repo:t för att undvika onödiga konflikter (krockar i historik).

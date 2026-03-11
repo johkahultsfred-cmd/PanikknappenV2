@@ -10,7 +10,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: panik-overlay
+        working-directory: Goofy_design2/bundle
 
     steps:
       - name: Checkout repository
@@ -20,11 +20,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: panik-overlay/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build project
         run: npm run build --if-present
@@ -52,7 +50,7 @@ jobs:
             MODE="prod"
           fi
           echo "Deploy-läge: ${MODE}"
-          ../scripts/netlify-deploy.sh "${MODE}"
+          ../../scripts/netlify-deploy.sh "${MODE}"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

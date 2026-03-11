@@ -4,11 +4,17 @@
   "description": "PAN1K KnApPen!!! — mobilapp-UI profilväljare, PWA",
   "private": true,
   "scripts": {
-    "start":   "npx serve . --listen 8080",
-    "dev":     "npx serve . --listen 8080",
-    "preview": "npx serve . --listen 3000"
+    "start": "npx serve . --listen 8080",
+    "dev": "npx serve . --listen 8080",
+    "preview": "npx serve . --listen 3000",
+    "check": "node -e \"const fs=require('fs');['index.html','css/main.css','js/app.js','service-worker.js','manifest.json'].forEach(f=>{if(!fs.existsSync(f)) throw new Error('Saknar fil: '+f)}); console.log('OK: bundle-struktur finns');\""
   },
-  "keywords": ["pwa", "kids", "profile-selector", "swedish"],
+  "keywords": [
+    "pwa",
+    "kids",
+    "profile-selector",
+    "swedish"
+  ],
   "engines": {
     "node": ">=18"
   }

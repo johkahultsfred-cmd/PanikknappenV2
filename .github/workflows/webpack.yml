@@ -1,4 +1,4 @@
-name: Node-kontroll (panik-overlay)
+name: Node-kontroll (Goofy_design2/bundle)
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: panik-overlay
+        working-directory: Goofy_design2/bundle
 
     strategy:
       matrix:
@@ -25,11 +25,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-          cache-dependency-path: panik-overlay/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Check app structure
         run: npm run check
