@@ -1,5 +1,5 @@
 [build]
-  publish = "panik-overlay"
+  publish = "Goofy_design2/bundle"
 
 [build.environment]
   NODE_VERSION = "20"

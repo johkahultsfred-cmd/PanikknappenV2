@@ -92,8 +92,8 @@ export NETLIFY_SITE_ID='<din-site-id>'
 
 ## 4) Vad scriptet kör i bakgrunden
 
-- Preview: `npx --yes netlify-cli deploy --dir=panik-overlay`
-- Produktion: `npx --yes netlify-cli deploy --prod --dir=panik-overlay`
+- Preview: `npx --yes netlify-cli deploy --dir=Goofy_design2/bundle`
+- Produktion: `npx --yes netlify-cli deploy --prod --dir=Goofy_design2/bundle`
 - Hook-läge: `curl -X POST <build-hook-url>` via `./scripts/netlify-deploy.sh hook` (tar URL via env eller argument).
 - Hook-läget provar fallback från `preview_server_hooks` till `build_hooks` vid HTTP 404.
 - Om `NETLIFY_AUTH_TOKEN` finns kör scriptet non-interactive (utan browser-login) via Netlify CLI:s miljövariabel (miljöinställning).
@@ -102,4 +102,4 @@ export NETLIFY_SITE_ID='<din-site-id>'
 - Om `NETLIFY_AUTH_TOKEN` finns lägger scriptet till `--auth <token>` automatiskt för non-interactive deploy (utan browser-login).
 - Om `NETLIFY_SITE_ID` finns lägger scriptet till `--site <site-id>` för tydlig koppling mot rätt Netlify-site i CI/container.
 
-Det betyder att site-mappen (mappen som publiceras) alltid är `panik-overlay`.
+Det betyder att site-mappen (mappen som publiceras) alltid är `Goofy_design2/bundle`.

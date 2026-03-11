@@ -11,7 +11,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: panik-overlay
+        working-directory: archive/panik-overlay-legacy
 
     steps:
       - name: Checkout repository
@@ -41,4 +41,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: panik-overlay/android/app/build/outputs/apk/debug/app-debug.apk
+          path: archive/panik-overlay-legacy/android/app/build/outputs/apk/debug/app-debug.apk
