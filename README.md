@@ -38,6 +38,8 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 > Uppdatera den här sektionen varje gång du/agenten gör ändringar.
 
 ### Tidigare utförda aktiviteter
+- Granskning + felsökning klar (2026-03-11): ny verifieringscheck `node scripts/verify-goofy-design2.js` jämför aktiva appens skärmar/deployfiler mot `Screenshots_for_visual_verification_goofydesign2/VISUAL-REFERENCE.md` och säkerställer att alla 10 referensbilder + grid finns i repo.
+- Deploystatus verifierad (2026-03-11): `./scripts/netlify-deploy.sh preview` stoppar korrekt i non-interactive miljö när `NETLIFY_AUTH_TOKEN` saknas; blockeraren är nu bekräftad och samma körning visar att publiceringsmappen är `Goofy_design2/bundle`.
 - Netlify-konfiguration uppdaterad (2026-03-11): `scripts/netlify-deploy.sh` har nu färdiga lägen `hook-preview`, `hook-preview-2` och `hook-prod` för de sparade Netlify-hookarna, och preview-hook triggas verifierat från repo-roten.
 - Appbyte klart (2026-03-11): tidigare aktiva `panik-overlay/` är arkiverad till `archive/panik-overlay-legacy/`, och ny aktiv app är nu `Goofy_design2/bundle/` för lokal körning och deploy (publicering).
 - PR-fix klar (2026-03-11): `Goofy_design2/bundle/assets/*.png` är borttagna från git för att undvika larm om binärfiler i ändringsförslag, med ny lokal instruktion för att packa upp bilderna vid behov.
@@ -99,6 +101,7 @@ Det här dokumentet är skrivet för dig som vill **bygga, testa och publicera a
 3. Visa backend-logg för snabbåtgärder i egen vy i familjeläget.
 
 ### Pågående aktivitet (nu)
+- Jämföra nya lokala snapshots mot referensbilderna (`Screenshots_for_visual_verification_goofydesign2/`) så fort browserverktyget är stabilt igen.
 - Säkerställa att designbundle kan delas utan binärfils-larm i PR och att lokala återställningssteg för bilder är tydligt dokumenterade.
 - Verifiera nästa online-deploy efter repo-städning och bekräfta att barn/familj-undersidorna laddar korrekt.
 - Planera ny, stabil återaktivering av föräldrakod (utan hårdkodad testkod) efter verifierat låsflöde.
